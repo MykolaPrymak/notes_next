@@ -1,0 +1,5 @@
+Based on
+https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/
+
+https://docs.docker.com/engine/install/debian/
+apt install docker-compose
