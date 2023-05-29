@@ -1,0 +1,1 @@
+export { HeaderProps, default } from './Header';

@@ -2,17 +2,16 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import Markdown from './Markdown';
+import Markdown from '../Markdown';
 
-interface MainProps {
+export interface PostsListProps {
   posts: ReadonlyArray<string>;
   title: string;
 }
 
-export default function Main(props: MainProps) {
+export default function PostsList(props: PostsListProps) {
   const { posts, title } = props;
 
-  console.log({posts})
   return (
     <Grid
       item

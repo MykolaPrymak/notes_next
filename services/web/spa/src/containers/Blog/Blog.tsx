@@ -1,17 +1,18 @@
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Header from './Header';
-import MainFeaturedPost from './MainFeaturedPost';
-import FeaturedPost from './FeaturedPost';
-import Main from './Main';
-import Sidebar from './Sidebar';
-import Footer from './Footer';
+
+import Header from '../../components/Header';
+import Sidebar from '../../components/Sidebar';
+import Footer from '../../components/Footer';
+
+import MainFeaturedPost from '../../components/FeaturedPosts/MainFeaturedPost';
+import FeaturedPost from '../../components/FeaturedPosts/FeaturedPost';
+import PostsList from '../../components/PostsList';
+
 import post1 from './blog-post.1.md';
 import post2 from './blog-post.2.md';
 import post3 from './blog-post.3.md';
@@ -85,12 +86,9 @@ const sidebar = {
   ],
 };
 
-const theme = createTheme();
-
 export default function Blog() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <>
       <Container maxWidth="lg">
         <Header title="Blog" sections={sections} />
         <main>
@@ -101,7 +99,7 @@ export default function Blog() {
             ))}
           </Grid>
           <Grid container spacing={5} sx={{ mt: 3 }}>
-            <Main title="From the firehose" posts={posts} />
+            <PostsList title="From the firehose" posts={posts} />
             <Sidebar
               title={sidebar.title}
               description={sidebar.description}
@@ -115,6 +113,6 @@ export default function Blog() {
         title="Footer"
         description="Something here to give the footer a purpose!"
       />
-    </ThemeProvider>
+    </>
   );
 }

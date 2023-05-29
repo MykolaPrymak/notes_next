@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useNavigate } from "react-router-dom";
+
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -6,7 +8,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 
-interface HeaderProps {
+import   "./Header.css";
+
+
+export interface HeaderProps {
   sections: ReadonlyArray<{
     title: string;
     url: string;
@@ -16,6 +21,7 @@ interface HeaderProps {
 
 export default function Header(props: HeaderProps) {
   const { sections, title } = props;
+  const navigate = useNavigate();
 
   return (
     <React.Fragment>
@@ -34,8 +40,11 @@ export default function Header(props: HeaderProps) {
         <IconButton>
           <SearchIcon />
         </IconButton>
-        <Button variant="outlined" size="small">
+        <Button variant="outlined" size="small" onClick={() => navigate("/register")}>
           Sign up
+        </Button>
+        <Button variant="outlined" size="small" id="login-btn" onClick={() => navigate("/login")}>
+          Sign in
         </Button>
       </Toolbar>
       <Toolbar

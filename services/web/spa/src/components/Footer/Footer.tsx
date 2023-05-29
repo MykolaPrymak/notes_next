@@ -17,7 +17,7 @@ function Copyright() {
   );
 }
 
-interface FooterProps {
+export interface FooterProps {
   description: string;
   title: string;
 }

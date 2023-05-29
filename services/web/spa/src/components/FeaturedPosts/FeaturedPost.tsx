@@ -6,7 +6,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
-interface FeaturedPostProps {
+export interface FeaturedPostProps {
   post: {
     date: string;
     description: string;

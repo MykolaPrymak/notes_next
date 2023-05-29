@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 
-interface SidebarProps {
+export interface SidebarProps {
   archives: ReadonlyArray<{
     url: string;
     title: string;

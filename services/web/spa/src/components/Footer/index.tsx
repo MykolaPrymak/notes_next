@@ -1,0 +1,1 @@
+export { FooterProps, default } from './Footer';

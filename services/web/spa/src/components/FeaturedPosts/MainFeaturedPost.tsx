@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 
-interface MainFeaturedPostProps {
+export interface MainFeaturedPostProps {
   post: {
     description: string;
     image: string;
