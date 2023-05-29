@@ -13,9 +13,11 @@ import MainFeaturedPost from '../../components/FeaturedPosts/MainFeaturedPost';
 import FeaturedPost from '../../components/FeaturedPosts/FeaturedPost';
 import PostsList from '../../components/PostsList';
 
-import post1 from './blog-post.1.md';
-import post2 from './blog-post.2.md';
-import post3 from './blog-post.3.md';
+
+// Redux
+import { fetchPosts, resetPosts, selectPosts } from '../../store/slices/posts'
+import { useAppDispatch } from '../../store'
+import { useSelector } from 'react-redux'
 
 const sections = [
   { title: 'Technology', url: '#' },
@@ -58,10 +60,6 @@ const featuredPosts = [
   },
 ];
 
-const posts = [post1, post2, post3];
-
-posts.push(`# fsdfdsfs ${Math.random()}`);
-
 const sidebar = {
   title: 'About',
   description:
@@ -87,6 +85,18 @@ const sidebar = {
 };
 
 export default function Blog() {
+  const dispatch = useAppDispatch();
+  const posts = useSelector(selectPosts)
+
+  // Load post at component load
+  React.useEffect(() => {
+    dispatch(fetchPosts());
+
+    return () => {
+      dispatch(resetPosts());
+    }
+  }, [])
+
   return (
     <>
       <Container maxWidth="lg">

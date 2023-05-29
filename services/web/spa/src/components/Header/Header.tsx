@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useNavigate } from "react-router-dom";
-
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -8,8 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 
-import   "./Header.css";
-
+import "./Header.css";
 
 export interface HeaderProps {
   sections: ReadonlyArray<{
@@ -28,12 +26,17 @@ export default function Header(props: HeaderProps) {
       <Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Button size="small">Subscribe</Button>
         <Typography
-          component="h2"
+          component="a"
           variant="h5"
           color="inherit"
           align="center"
           noWrap
           sx={{ flex: 1 }}
+          href="/"
+          onClick={(evt: React.MouseEvent) => {
+            evt.preventDefault();
+            navigate("/");
+          }}
         >
           {title}
         </Typography>

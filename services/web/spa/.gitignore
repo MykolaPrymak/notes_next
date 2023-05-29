@@ -43,7 +43,9 @@ typings/
 # dotenv environment variables file
 .env
 
-
 # Build files
 build/
 dist/
+
+# Bundle analyzer report
+parcel-bundle-reports/

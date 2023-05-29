@@ -11,24 +11,28 @@
     "start": "parcel",
     "prebuild": "run-s clean",
     "build": "parcel build --public-url './'",
+    "build:analyzer": "parcel build --reporter @parcel/reporter-bundle-analyzer",
     "clean": "rimraf ./dist",
     "check": "tsc --noEmit",
     "test": "jest",
     "lint": "eslint --ext ts,tsx src",
-    "ci": "yarn build && yarn test && yarn lint && yarn check"
+    "ci": "yarn build --no-source-maps && yarn test && yarn lint && yarn run check"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.0",
+    "@reduxjs/toolkit": "^1.9.5",
     "markdown-to-jsx": "^7.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^6.11.1"
   },
   "devDependencies": {
-    "@parcel/transformer-inline-string": "^2.8.3",
+    "@parcel/reporter-bundle-analyzer": "^2.9.1",
+    "@parcel/transformer-inline-string": "^2.9.1",
     "@types/jest": "^28.1.6",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
@@ -38,7 +42,7 @@
     "eslint-plugin-react": "^7.30.1",
     "jest": "^28.1.3",
     "npm-run-all": "^4.1.5",
-    "parcel": "^2.8.3",
+    "parcel": "^2.9.1",
     "process": "^0.11.10",
     "typescript": "^4.7.4"
   }
