@@ -47,7 +47,7 @@ const Application: React.FC<Record<string, never>> = () => {
     <BrowserRouter  >
       <Routes>
         <Route path="/" element={<Blog />} />
-        <Route path="/login" element={<Root><p>Login</p><p>a</p></Root>} />
+        <Route path="/login" element={<Root><p>Login</p></Root>} />
         <Route path="/logout" element={<Root><p>logout</p></Root>} />
         <Route path="/*" element={<Root><p>Not found</p></Root>} />
       </Routes>

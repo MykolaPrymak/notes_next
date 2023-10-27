@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -89,7 +89,9 @@ export default function Blog() {
   const posts = useSelector(selectPosts)
 
   // Load post at component load
-  React.useEffect(() => {
+  useEffect(() => {
+    console.log('dispatch(fetchPosts());');
+    
     dispatch(fetchPosts());
 
     return () => {
@@ -102,20 +104,21 @@ export default function Blog() {
       <Container maxWidth="lg">
         <Header title="Blog" sections={sections} />
         <main>
-          <MainFeaturedPost post={mainFeaturedPost} />
-          <Grid container spacing={4}>
+          {/* <MainFeaturedPost post={mainFeaturedPost} /> */}
+          {/* <Grid container spacing={4}>
             {featuredPosts.map((post) => (
               <FeaturedPost key={post.title} post={post} />
-            ))}
-          </Grid>
-          <Grid container spacing={5} sx={{ mt: 3 }}>
+            ))} 
+          </Grid> */}
+
+          <Grid container spacing={1} sx={{ mt: 3 }}>
             <PostsList title="From the firehose" posts={posts} />
-            <Sidebar
+            {/* <Sidebar
               title={sidebar.title}
               description={sidebar.description}
               archives={sidebar.archives}
               social={sidebar.social}
-            />
+            /> */}
           </Grid>
         </main>
       </Container>

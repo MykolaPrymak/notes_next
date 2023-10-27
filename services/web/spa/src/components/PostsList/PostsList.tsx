@@ -16,7 +16,7 @@ export default function PostsList(props: PostsListProps) {
     <Grid
       item
       xs={12}
-      md={8}
+      md={12}
       sx={{
         '& .markdown': {
           py: 3,
