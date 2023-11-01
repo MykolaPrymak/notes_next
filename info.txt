@@ -3,3 +3,24 @@ https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/
 
 https://docs.docker.com/engine/install/debian/
 apt install docker-compose
+
+Move docker directory
+https://docs.docker.com/config/daemon/#daemon-data-directory
+
+
+systemctl stop docker.service && systemctl stop docker.socket
+
+systemctl daemon-reload && systemctl start docker
+
+systemctl info docker.service
+
+
+
+
+# Setup python
+sudo apt install python3.10-venv
+cd services/web
+python3 -m venv env
+source env/bin/activate
+
+pip install -r ./requirements.txt

@@ -12,5 +12,7 @@ notes
 # Local History for Visual Studio Code
 .history/
 
+node_modules/
+
 # Built Visual Studio Code Extensions
 *.vsix
