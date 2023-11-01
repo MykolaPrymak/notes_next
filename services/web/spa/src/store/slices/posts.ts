@@ -16,16 +16,25 @@ export const fetchPosts = createAsyncThunk(
 )
 
 
-type PostStateErrorType = null | Error;
+type PostStateErrorType = null | string;
 
-type Post = {
+export type Author = {
+  id: number;
+  name: string;
+  avatar: string;
+}
+export type Post = {
   id: string;
   title: string;
+  date: string,
+  author: Author,
   content: string;
+  tags: string[],
+
 }
 
 export interface PostsState {
-  posts: string[]; // Post[]
+  posts: Post[]
   state: REQUEST_STATUS;
   error: PostStateErrorType;
 }
@@ -43,16 +52,26 @@ export const postsSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
-      state.posts = [];
+      state = initialState;
+
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchPosts.pending, (state) => {
+      state.state = REQUEST_STATUS.LOADING;
+      state.error = null;
+    })
+    builder.addCase(fetchPosts.rejected, (state, action) => {
+      state.state = REQUEST_STATUS.FAIL;
+      state.error = action.error.message || 'Loading error';
+    })
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(fetchPosts.fulfilled, (state, action) => {
-      // Add posts to the state array
-      state.posts.push(...action.payload)
+    // Add posts to the state array
+      state.posts.push(...action.payload);
+      state.state = REQUEST_STATUS.SUCCESS;
     })
-  }
+    }
 })
 
 // Action creators are generated for each case reducer function
@@ -60,5 +79,6 @@ export const { reset: resetPosts } = postsSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectPosts = (state: RootState) => state.posts.posts;
+export const isLoadingPosts = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.posts.state);
 
 export default postsSlice.reducer

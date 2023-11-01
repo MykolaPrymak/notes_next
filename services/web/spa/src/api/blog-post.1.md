@@ -1,7 +1,3 @@
-# Sample blog post
-
-_April 1, 2020 by [Olivier](/)_
-
 This blog post shows a few different types of content that are supported and styled with
 Material styles. Basic typography, images, and code are all supported.
 You can extend these by modifying `Markdown.js`.
@@ -44,3 +40,7 @@ Donec ullamcorper nulla non metus auctor fringilla. Nulla vitae elit libero, a p
 1. Maecenas sed diam eget risus varius blandit sit amet non magna.
 
 Cras mattis consectetur purus sit amet fermentum. Sed posuere consectetur est at lobortis.
+
+| Hallo | Hi |
+|--------------|----------:|
+| 1 | 2 |

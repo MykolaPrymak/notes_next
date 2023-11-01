@@ -10,9 +10,33 @@ export const loadPosts: (offset?: number, limit?: number) => Promise<any> = asyn
         console.log('load posts failed', e)
     }
 
-    return [
-        post1,
-        post2,
-        post3,
-    ];
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve([
+                {
+                    id: 1,
+                    title: "Sample blog post",
+                    date: 'April 1, 2020',
+                    author: {id: 1, name: 'Olivier', avatar: ''},
+                    content: post1,
+                    tags: [],
+                },{
+                    id: 2,
+                    title: "Another blog post",
+                    date: 'March 23, 2020',
+                    author: {id: 1, name: 'Matt', avatar: ''},
+                    content: post2,
+                    tags: [],
+                },
+                {
+                    id: 3,
+                    title: "New feature",
+                    date: 'March 14, 2020',
+                    author: {id: 1, name: 'Tom', avatar: ''},
+                    content: post3,
+                    tags: [],
+                }
+            ]);
+        }, 2000)
+    });
 }

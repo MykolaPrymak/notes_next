@@ -6,18 +6,20 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 
 import Header from '../../components/Header';
-import Sidebar from '../../components/Sidebar';
+// import Sidebar from '../../components/Sidebar';
 import Footer from '../../components/Footer';
 
-import MainFeaturedPost from '../../components/FeaturedPosts/MainFeaturedPost';
-import FeaturedPost from '../../components/FeaturedPosts/FeaturedPost';
+// import MainFeaturedPost from '../../components/FeaturedPosts/MainFeaturedPost';
+// import FeaturedPost from '../../components/FeaturedPosts/FeaturedPost';
 import PostsList from '../../components/PostsList';
 
 
 // Redux
-import { fetchPosts, resetPosts, selectPosts } from '../../store/slices/posts'
+import { fetchPosts, resetPosts, selectPosts, isLoadingPosts } from '../../store/slices/posts'
 import { useAppDispatch } from '../../store'
 import { useSelector } from 'react-redux'
+import { Button, Skeleton } from '@mui/material';
+import { LocalFireDepartment } from '@mui/icons-material';
 
 const sections = [
   { title: 'Technology', url: '#' },
@@ -84,18 +86,33 @@ const sidebar = {
   ],
 };
 
+const SkeletonPost: React.FC = () => (
+  <>
+  <Grid
+      item
+      xs={12}
+      >
+
+    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+    <Skeleton variant="text" sx={{ fontSize: '0.5rem' }} />
+    <Skeleton variant="rectangular" height={250} />
+      </Grid>
+  </>
+);
+
 export default function Blog() {
   const dispatch = useAppDispatch();
   const posts = useSelector(selectPosts)
+  const isLoading = useSelector(isLoadingPosts)
 
   // Load post at component load
   useEffect(() => {
     console.log('dispatch(fetchPosts());');
-    
-    dispatch(fetchPosts());
+
+    const loadResult = dispatch(fetchPosts());
 
     return () => {
-      dispatch(resetPosts());
+      loadResult.abort();
     }
   }, [])
 
@@ -113,12 +130,14 @@ export default function Blog() {
 
           <Grid container spacing={1} sx={{ mt: 3 }}>
             <PostsList title="From the firehose" posts={posts} />
+            {isLoading && <SkeletonPost />}
             {/* <Sidebar
               title={sidebar.title}
               description={sidebar.description}
               archives={sidebar.archives}
               social={sidebar.social}
             /> */}
+            {!isLoading && <Button onClick={() => dispatch(fetchPosts())}>Load more</Button>}
           </Grid>
         </main>
       </Container>
