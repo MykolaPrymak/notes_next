@@ -3,10 +3,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from project import app, db, User
+from app import create_app
+from app.db import db, User
 
+flask_app = create_app()
 
-cli = FlaskGroup(app)
+cli = FlaskGroup(flask_app)
 
 
 @cli.command("create_db")
