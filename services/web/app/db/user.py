@@ -32,11 +32,16 @@ class User(db.Model):
         return json.dumps(self.to_dict())
 
     def __str__(self):
-        # return f'The value of pi is approximately {math.pi:.3f}.' self.id + " " + self.lastName
+        # return f'The value post_tag_association_tableof pi is approximately {math.pi:.3f}.' self.id + " " + self.lastName
         return "AAAA"
 
-    def to_dict(self):
-        return {k: getattr(self, k) for k in self.__table__.columns.keys()}
+    def to_dict(self, short:bool = False):
+        dict_keys = self.__table__.columns.keys()
+
+        if (short is True):
+            dict_keys = ['id', 'username']
+
+        return {k: getattr(self, k) for k in dict_keys}
 
     def verify_passowrd(self, password:str) -> bool:
         return ph.verify(self._password, password)
@@ -92,8 +97,18 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {id}:{body}>'.format(id=self.id, body=self.body)
     
-    def to_dict(self):
-        return {k: getattr(self, k) for k in self.__table__.columns.keys()}
+    def to_dict(self, include_author: bool = False, include_tags:bool = False):
+        # Expose basic columns
+        post_dict = {k: getattr(self, k) for k in self.__table__.columns.keys()}
+
+        if (include_author):
+            post_dict.pop("user_id")
+            post_dict = {**post_dict, "author": self.author.to_dict(short=True)}
+
+        if (include_tags):
+            post_dict = {**post_dict, "tags": [tag.to_dict().get("name") for tag in self.tags]}
+
+        return post_dict
     
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)

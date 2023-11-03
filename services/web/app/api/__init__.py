@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify
-from app.db import User
+from flask import Blueprint, jsonify, request
+from app.db import User, Post, Tag
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -16,7 +16,7 @@ def list_users():
     print(data)
     result = [{
         "id": d.id,
-        "login": d.login,
+        "login": d.username,
         "email": d.email,
         "active": d.active,
         "password_hash": d.hash,
@@ -30,5 +30,14 @@ def list_users():
     # return jsonify(result=result)
     return jsonify([user.to_dict() for user in data])
 
+@bp.route("/posts")
+def posts():
+    # searchword = request.args.get('id', None)
+    db_query = Post.query
+
+    return jsonify({
+        "posts": [post.to_dict(include_author=True, include_tags=True) for post in db_query.all()],
+        "count": db_query.count()
+    })
 
 # from app.errors import handlers
