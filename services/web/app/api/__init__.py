@@ -8,7 +8,7 @@ def hello_world():
     return jsonify(hello="world")
 
 @bp.route("/users")
-def list_users():
+def users_api():
     # users = db.session.query(User).all()
     data = User.query.all()
     # data = User.query.filter_by(id = 2)
@@ -31,7 +31,7 @@ def list_users():
     return jsonify([user.to_dict() for user in data])
 
 @bp.route("/posts")
-def posts():
+def posts_api():
     # searchword = request.args.get('id', None)
     db_query = Post.query
 
@@ -39,5 +39,12 @@ def posts():
         "posts": [post.to_dict(include_author=True, include_tags=True) for post in db_query.all()],
         "count": db_query.count()
     })
+
+@bp.route("/tags")
+def tags_api():
+    # searchword = request.args.get('id', None)
+    db_query = Tag.query
+
+    return jsonify([tag.name for tag in Tag.query.all()])
 
 # from app.errors import handlers
