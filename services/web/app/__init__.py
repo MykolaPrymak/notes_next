@@ -4,6 +4,7 @@ from .db import db
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    app.config.from_prefixed_env()
     app.config.from_object("app.config.Config")
 
     if test_config is not None:
