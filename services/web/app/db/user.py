@@ -80,6 +80,7 @@ class Post(db.Model):
     __tablename__ = "posts"
 
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(512))
     body = db.Column(db.String(8 * 1024 * 1024)) # 8 MB of text for post boy
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
