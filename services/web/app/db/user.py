@@ -13,7 +13,7 @@ class User(db.Model):
     email = db.Column(db.String(128), unique=True, nullable=False)
     name = db.Column(db.String(128), unique=False, nullable=False)
     active = db.Column(db.Boolean(), default=True, nullable=False)
-    _password = db.Column('password', db.String(128), nullable=False)
+    _password = db.Column('password', db.String(128), unique=True, nullable=False)
 
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
@@ -33,13 +33,18 @@ class User(db.Model):
 
     def __str__(self):
         # return f'The value post_tag_association_tableof pi is approximately {math.pi:.3f}.' self.id + " " + self.lastName
-        return "AAAA"
+        return "User<>"
+
 
     def to_dict(self, short:bool = False):
+        """Convert user object to dict. The password field will be omited
+        """
         dict_keys = self.__table__.columns.keys()
 
-        if (short is True):
+        if short is True:
             dict_keys = ['id', 'username']
+        else:
+            dict_keys.remove('password')
 
         return {k: getattr(self, k) for k in dict_keys}
 
@@ -83,6 +88,7 @@ class Post(db.Model):
     title = db.Column(db.String(512))
     body = db.Column(db.String(8 * 1024 * 1024)) # 8 MB of text for post boy
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    private = db.Column(db.Boolean(), default=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 # backref2='post_tags'
