@@ -6,23 +6,19 @@ load_dotenv()
 from app import create_app
 from app.db import db, User, Post, Tag
 
-flask_app = create_app()
-
-cli = FlaskGroup(flask_app)
+cli = FlaskGroup(create_app)
 
 
 # @flask_app.shell_context_processor
 # def make_shell_context():
 #     return {'db': db, 'User': User, 'Post' :Post}
 
-@cli.command("create_db")
-def create_db():
+def _create_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
 
-@cli.command("seed_db")
-def seed_db():
+def _seed_db():
     print('Create user')
     user1 = User(email="michael@mherman.org", password='hash')
     user2 = User(email="john.doe@example.com", password='hash')
@@ -30,11 +26,12 @@ def seed_db():
     tag1 = Tag('cool')
     tag2 = Tag(' Nice ')
     print('Create post')
-    post1 = Post(body="AAAA", author=user1)
+    post1 = Post(title="Post 0", body="AAAA", author=user1)
     post1.tags.append(tag1)
     post1.tags.append(tag1)
     post1.tags.append(tag1)
     post1.tags.append(tag2)
+    post1.tags.append(Tag('cool2'))
 
 
     print('Read')
@@ -52,9 +49,9 @@ def seed_db():
     db.session.add(tag2)
 
     db.session.add(post1)
-    db.session.add(Post(body="AAAA", author=user1))
-    db.session.add(Post(body="AAAA", author=user1))
-    db.session.add(Post(body="BBB", author=user2))
+    db.session.add(Post(title="Post 1", body="AAAA", author=user1, tags=[tag1]))
+    db.session.add(Post(title="Post 2", body="AAAA", author=user1))
+    db.session.add(Post(title="Post 3", body="BBB", author=user2, tags=[tag1, tag2]))
 
     db.session.commit()
 
@@ -62,6 +59,20 @@ def seed_db():
     print(user1_posts.first().tags.first().posts.all())
 
     print(Tag.query.filter_by(name = "cool").first().posts.all())
+
+
+@cli.command("create_db")
+def create_db():
+    _create_db()
+
+@cli.command("seed_db")
+def seed_db():
+    _seed_db()
+
+@cli.command("init_db")
+def init_db():
+    _create_db()
+    _seed_db()
 
 if __name__ == "__main__":
     cli()
