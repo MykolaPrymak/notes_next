@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_session import Session
 from .db import db
 
 def create_app(test_config=None):
@@ -17,8 +18,15 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    # //server_session.app.session_interface.db.create_all()
     # Init Flask SQLAlchemy
+
     db.init_app(app)
+
+    # Create and initialize the Flask-Session object AFTER `app` has been configured
+    app.config["SESSION_SQLALCHEMY"] = db
+
+    Session(app)
 
     @app.route("/health")
     def app_health():

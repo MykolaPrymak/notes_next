@@ -1,5 +1,5 @@
 venv/
 .env
-
+.vscode
 # python cache files
 __pycache__/
