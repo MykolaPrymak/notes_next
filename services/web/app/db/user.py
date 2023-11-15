@@ -1,9 +1,10 @@
-
+from datetime import datetime
 from argon2 import PasswordHasher
 import json
 from .base import db
 
 ph = PasswordHasher()
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -13,6 +14,7 @@ class User(db.Model):
     email = db.Column(db.String(128), unique=True, nullable=False)
     name = db.Column(db.String(128), unique=False, nullable=False)
     active = db.Column(db.Boolean(), default=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     _password = db.Column('password', db.String(128),
                           unique=True, nullable=False)
 
