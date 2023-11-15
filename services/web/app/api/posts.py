@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session
-from .validator import post_shema, SchemaError
+from .validator import post_shema, normalize_page_num, SchemaError
 from .decorators import user_authentificated
 from app.db import db, Post, User, Tag
 
@@ -14,6 +14,10 @@ def create_tags_safe(tag_names: list[str]):
 def posts_list():
     tag = request.args.get('tag')
     user_id = request.args.get('user_id')
+    page = max(request.args.get('page', 1, int), 1)
+    per_page = normalize_page_num(request.args.get('limit', 10, int))
+
+    print({"page": page, "per_page": per_page})
 
     db_query = Post.query
 
@@ -24,9 +28,11 @@ def posts_list():
     if (tag is not None):
         db_query = db_query.filter(Post.tags.any(name=tag))
 
+    # Add pagination
+    paginated_query = db_query.paginate(page=page, per_page=per_page)
+
     return jsonify({
-        "tag": tag,
-        "posts": [post.to_dict(include_author=True, include_tags=True) for post in db_query.all()],
+        "posts": [post.to_dict(include_author=True, include_tags=True) for post in paginated_query.items],
         "count": db_query.count()
     })
 
