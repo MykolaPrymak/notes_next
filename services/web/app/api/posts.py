@@ -1,9 +1,14 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from .validator import post_shema, SchemaError
 from .decorators import user_authentificated
-from app.db import Post
+from app.db import db, Post, User, Tag
 
 posts_bp = Blueprint('api_posts', __name__, url_prefix='posts/')
+
+
+def create_tags_safe(tag_names: list[str]):
+    return map(lambda name: Tag.query.filter_by(name=name).first() or Tag(name), tag_names)
+
 
 @posts_bp.route("/")
 def posts_list():
@@ -25,35 +30,34 @@ def posts_list():
         "count": db_query.count()
     })
 
+
 @posts_bp.route("/", methods=["POST"])
 @user_authentificated
 def posts_add():
-    print("Adding post")
-    print(request.form)
-
+    # Prepare data
     try:
-        post = post_shema.validate(request.form.to_dict())
-    except SchemaError:
+        post_data: dict = post_shema.validate(request.form.to_dict())
+    except SchemaError as er:
+        print(er)
         return jsonify({"code": 400, "name": "form validation error"}), 400
     except:
         return jsonify({"code": 400, "name": "error"}), 400
 
-    post_title = post.get('title', None)
-    post_body = post.get('body', None)
-    post_tags = post.get('tags', None)
-    is_post_private = post.get('is_private', None) == 'true'
+    # Add post/tags to DB
+    try:
+        post_data.update({"tags": create_tags_safe(post_data.get('tags'))})
 
-    print('validated post')
-    print(post)
+        author = User.query.filter_by(id=session.get('user').get('id')).first()
+        post = Post(**post_data, author=author)
 
-    if (post_title is not None and post_body is not None):
-        pass
+        db.session.add(post)
+        db.session.commit()
 
-    return jsonify({"status":"OK"})
+        return jsonify({"status": "OK", "post": post.to_dict(include_tags=True)})
+    except:
+        return jsonify({"code": 500, "name": "Server error"}), 500
 
 
 @posts_bp.route("/<int:post_id>")
-def single_post_api(post_id:int = None):
+def single_post_api(post_id: int = None):
     return jsonify(Post.query.filter_by(id=post_id).first_or_404().to_dict(include_author=True, include_tags=True))
-
-
