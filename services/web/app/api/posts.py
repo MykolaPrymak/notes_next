@@ -17,8 +17,6 @@ def posts_list():
     page = max(request.args.get('page', 1, int), 1)
     per_page = normalize_page_num(request.args.get('limit', 10, int))
 
-    print({"page": page, "per_page": per_page})
-
     db_query = Post.query
 
     # Apply filters
@@ -28,8 +26,18 @@ def posts_list():
     if (tag is not None):
         db_query = db_query.filter(Post.tags.any(name=tag))
 
+    # Add private filter
+    if session.get("is_authenticated") is True:
+        current_user_id = session.get('user').get("id")
+        # comibne public post and all my
+        db_query = db_query.filter(
+            (Post.private == False) | (Post.user_id == current_user_id))
+    else:
+        db_query = db_query.filter_by(private=False)
+
     # Add pagination
-    paginated_query = db_query.paginate(page=page, per_page=per_page)
+    paginated_query = db_query.order_by(
+        Post.created_at.desc()).paginate(page=page, per_page=per_page)
 
     return jsonify({
         "posts": [post.to_dict(include_author=True, include_tags=True) for post in paginated_query.items],

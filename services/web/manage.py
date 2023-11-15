@@ -51,7 +51,7 @@ def _seed_db():
     db.session.add(post1)
     db.session.add(Post(title="Post 1", body="AAAA", author=user1, tags=[tag1]))
     db.session.add(Post(title="Post 2", body="AAAA", author=user1))
-    db.session.add(Post(title="Post 3", body="BBB", author=user2, tags=[tag1, tag2]))
+    db.session.add(Post(title="Post 3", body="BBB", private=True, author=user2, tags=[tag1, tag2]))
 
     db.session.commit()
 
