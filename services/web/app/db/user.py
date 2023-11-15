@@ -1,10 +1,9 @@
-from datetime import datetime
+
 from argon2 import PasswordHasher
 import json
 from .base import db
 
 ph = PasswordHasher()
-
 
 class User(db.Model):
     __tablename__ = "users"
@@ -19,8 +18,6 @@ class User(db.Model):
 
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
-    # from sqlalchemy.orm import validates
-
     def __init__(self, email: str, **kwargs):
         self.email = email
         self.name = kwargs.get("name", email)
@@ -34,7 +31,6 @@ class User(db.Model):
         return json.dumps(self.to_dict())
 
     def __str__(self):
-        # return f'The value post_tag_association_tableof pi is approximately {math.pi:.3f}.' self.id + " " + self.lastName
         return "User<>"
 
     def to_dict(self, short: bool = False):
@@ -55,91 +51,15 @@ class User(db.Model):
 
     @property
     def password(self):
-        print('Try to access the password')
+        # password is not accessible directly
         return None
 
     @property
     def hash(self) -> str | None:
-        print('Try to access the password hash')
         return self._password
 
     @password.setter
     def password(self, password):
-        print('Try to set a password', password)
         if (password is not None):
             hash = ph.hash(password)
             self._password = hash
-
-
-# post_tag_association_table = db.Table(
-#     'post_tags',
-#     db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True),
-#     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
-# )
-
-class PostsTags(db.Model):
-    tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'), primary_key=True)
-    post_id = db.Column(db.Integer, db.ForeignKey(
-        'posts.id'), primary_key=True)
-
-
-class Post(db.Model):
-    __tablename__ = "posts"
-
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(512))
-    body = db.Column(db.String(8 * 1024 * 1024))  # 8 MB of text for post boy
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    private = db.Column(db.Boolean(), default=False, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    # backref2='post_tags'
-    tags = db.relationship(
-        'Tag', secondary=PostsTags.__tablename__, back_populates="posts", lazy='dynamic')
-
-    # tags = db.relationship(__table__
-    #     'Tag', secondary=post_tag_association_table,
-    #     primaryjoin=(post_tag_association_table.c.tag_id == id),
-    #     secondaryjoin=(post_tag_association_table.c.post_id == id),
-    #     backref=db.backref('post_tags', lazy='dynamic'), lazy='dynamic')
-
-    def __repr__(self):
-        return '<Post {id}:{body}>'.format(id=self.id, body=self.body)
-
-    def to_dict(self, include_author: bool = False, include_tags: bool = False):
-        # Expose basic columns
-        post_dict = {k: getattr(self, k)
-                     for k in self.__table__.columns.keys()}
-
-        if (include_author):
-            post_dict.pop("user_id")
-            post_dict = {**post_dict,
-                         "author": self.author.to_dict(short=True)}
-
-        if (include_tags):
-            post_dict = {
-                **post_dict, "tags": [tag.to_dict().get("name") for tag in self.tags]}
-
-        return post_dict
-
-
-class Tag(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), unique=True)
-    #  backref2='post_tags'
-    posts = db.relationship(
-        'Post', secondary=PostsTags.__tablename__, back_populates="tags", lazy='dynamic')
-
-    def __init__(self, name: str):
-        self.name = name.lower().strip()
-        if len(self.name) == 0:
-            raise ValueError("Tag name can't be empy")
-
-        # print('post_tag_association_table', post_tag_association_table)
-        print('post_tag_association_table', PostsTags.__tablename__)
-
-    def __repr__(self):
-        return '<Tag {id}:{name}>'.format(id=self.id, name=self.name)
-
-    def to_dict(self):
-        return {k: getattr(self, k) for k in self.__table__.columns.keys()}
