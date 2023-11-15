@@ -9,7 +9,8 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(512))
     body = db.Column(db.String(8 * 1024 * 1024))  # 8 MB of text for post boy
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     private = db.Column(db.Boolean(), default=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
