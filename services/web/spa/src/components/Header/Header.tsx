@@ -6,9 +6,7 @@ import Button from '@mui/material/Button';
 // import SearchIcon from '@mui/icons-material/Search';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-
-import "./Header.css";
-
+import AuthSection from "./AuthSection";
 export interface HeaderProps {
   sections: ReadonlyArray<SectionItem>;
   title: string;
@@ -79,9 +77,7 @@ export default function Header(props: HeaderProps) {
         {/* <Button variant="outlined" size="small" onClick={() => navigate("/register")}>
           Sign up
         </Button> */}
-        <Button variant="outlined" size="small" id="login-btn" onClick={() => navigate("/login")}>
-          Sign in
-        </Button>
+        <AuthSection />
       </Toolbar>
       <Sections items={sections}/>
 
