@@ -34,13 +34,13 @@ export default function PostsList(props: PostsListProps) {
       </Typography>
       <Divider />
       {posts.map((post, idx) => (
-        <div className="post-item" key={`${idx}_${post.id}_${post.date}`}>
+        <div className="post-item" key={`${idx}_${post.id}`}>
           <Typography variant="h4">{post.title}</Typography>
 
-          <Typography className="post-date-author"><em>{post.date} by <Link to={`/author/${post.author.id}`}>{post.author.name}</Link></em></Typography>
+          <Typography className="post-date-author"><em>{post.created_at} by <Link to={`/author/${post.author.id}`}>{post.author.username}</Link></em></Typography>
 
           <Markdown className="markdown">
-            {post.content}
+            {post.body}
           </Markdown>
         </div>
       ))}

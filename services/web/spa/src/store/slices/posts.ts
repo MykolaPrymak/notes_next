@@ -15,32 +15,39 @@ export const fetchPosts = createAsyncThunk(
   }
 )
 
+export type PostAPIResponse = {
+  count: number;
+  posts: Post[];
+}
 
 type PostStateErrorType = null | string;
 
 export type Author = {
   id: number;
-  name: string;
-  avatar: string;
+  username: string;
+  // avatar: string;
 }
 export type Post = {
   id: string;
   title: string;
-  date: string,
+  body: string;
   author: Author,
-  content: string;
+  private: boolean,
   tags: string[],
-
+  created_at: string,
+  updated_at: string,
 }
 
 export interface PostsState {
-  posts: Post[]
+  posts: Post[];
+  currentPage: number;
+  totalPosts: number;
   state: REQUEST_STATUS;
   error: PostStateErrorType;
 }
 
 
-const initialState: PostsState = { posts: [], state: REQUEST_STATUS.IDLE, error: null };
+const initialState: PostsState = { posts: [], currentPage: 1, totalPosts: 0, state: REQUEST_STATUS.IDLE, error: null };
 
 
 export const postsSlice = createSlice({
@@ -68,7 +75,8 @@ export const postsSlice = createSlice({
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(fetchPosts.fulfilled, (state, action) => {
     // Add posts to the state array
-      state.posts.push(...action.payload);
+      state.posts.push(...action.payload.posts);
+      state.totalPosts = action.payload.count;
       state.state = REQUEST_STATUS.SUCCESS;
     })
     }
