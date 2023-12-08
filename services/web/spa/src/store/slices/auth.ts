@@ -50,6 +50,7 @@ export const loginUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
+  // TODO: use thunkAPI.signal to perform aborting of fetch
   async () => await logout()
 )
 
@@ -110,20 +111,23 @@ export const authSlice = createSlice({
         window.location.assign('/');
       } else {
         state.loginError = `${action.payload.body.error}: ${action.payload.body.message}`;
+        state.loginStatus = REQUEST_STATUS.FAIL;
       }
-      state.loginStatus = REQUEST_STATUS.SUCCESS;
     })
 
     // Logout
-    builder.addCase(logoutUser.pending, (state) => {
+    builder.addCase(logoutUser.pending, (state, ...args) => {
+      console.log('logoutUser.pending', args)
       state.logoutStatus = REQUEST_STATUS.LOADING;
       state.logoutError = null;
     })
     builder.addCase(logoutUser.rejected, (state, action) => {
+      console.log('logoutUser.rejected', state.logoutStatus)
       state.logoutStatus = REQUEST_STATUS.FAIL;
       state.logoutError = action.error.message || 'Logout error';
     })
     builder.addCase(logoutUser.fulfilled, (state, action) => {
+      console.log('logoutUser.fulfilled')
       if (action.payload.ok) {
         window.location.assign('/');
       } else {
@@ -145,7 +149,7 @@ export const getError = (state: RootState) => state.auth.error;
 export const isLoginInProgress = (state: RootState) => state.auth.loginStatus === REQUEST_STATUS.LOADING;
 export const getLoginError = (state: RootState) => state.auth.loginError;
 
-export const isLogoutInProgress = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.auth.state);
-export const getLogoutError = (state: RootState) => state.auth.error;
+export const isLogoutInProgress = (state: RootState) => state.auth.logoutStatus === REQUEST_STATUS.LOADING;
+export const getLogoutError = (state: RootState) => state.auth.logoutError;
 
 export default authSlice.reducer

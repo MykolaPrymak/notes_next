@@ -9,6 +9,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Blog from "../Blog/Blog";
 import Login from "../Login";
+import Logout from "../Logout";
 
 import { fetchMeInfo } from '../../store/slices/auth'
 import { useAppDispatch } from '../../store'
@@ -56,7 +57,7 @@ const Application: React.FC<Record<string, never>> = () => {
       <Routes>
         <Route path="/" element={<Blog />} />
         <Route path="/login" element={<Root hideHeader={true}><Login /></Root>} />
-        <Route path="/logout" element={<Root hideHeader={true}><p>logout</p></Root>} />
+        <Route path="/logout" element={<Root hideHeader={true}><Logout /></Root>} />
         <Route path="/*" element={<Root><p>Not found</p></Root>} />
       </Routes>
     </BrowserRouter>
