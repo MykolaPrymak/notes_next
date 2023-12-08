@@ -1,6 +1,6 @@
-import post1 from './blog-post.1.md';
-import post2 from './blog-post.2.md';
-import post3 from './blog-post.3.md';
+// import post1 from './blog-post.1.md';
+// import post2 from './blog-post.2.md';
+// import post3 from './blog-post.3.md';
 
 import { PostAPIResponse } from "../store/slices/posts"
 
@@ -13,6 +13,7 @@ export const loadPosts: (offset?: number, limit?: number) => Promise<PostAPIResp
     }
     return null;
 
+    /*
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve([
@@ -42,4 +43,5 @@ export const loadPosts: (offset?: number, limit?: number) => Promise<PostAPIResp
             ]);
         }, 2000)
     });
+    */
 }
