@@ -3,14 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { REQUEST_STATUS } from "../consts";
 import type { RootState } from '..'
 
-import { loadMeInfo } from "../../api/auth";
-
-// First, create the thunk
-export const fetchMeInfo = createAsyncThunk(
-  'auth/fetchMeInfo',
-  async () => await loadMeInfo()
-)
-
+import { loadMeInfo, login, logout } from "../../api/auth";
 
 type AuthErrorType = null | string;
 
@@ -23,13 +16,52 @@ export type Me = {
   "created_at": string;
 }
 
-export interface AuthState {
-  me: Me | null;
-  state: REQUEST_STATUS;
-  error: AuthErrorType;
+export type LoginData = {
+  username: string;
+  password: string;
 }
 
-const initialState: AuthState = { me: null, state: REQUEST_STATUS.IDLE, error: null };
+export type LoginReply = {
+  id: number;
+  username: string
+}
+
+export interface AuthState {
+  me: Me | null;
+  status: REQUEST_STATUS;
+  error: AuthErrorType;
+  loginStatus: REQUEST_STATUS;
+  loginError: AuthErrorType;
+  logoutStatus: REQUEST_STATUS;
+  logoutError: AuthErrorType;
+}
+
+
+// First, create the thunk
+export const fetchMeInfo = createAsyncThunk(
+  'auth/fetchMeInfo',
+  async () => await loadMeInfo()
+)
+
+export const loginUser = createAsyncThunk(
+  'auth/loginUser',
+  async (credentials: LoginData) => await login(credentials)
+)
+
+export const logoutUser = createAsyncThunk(
+  'auth/logoutUser',
+  async () => await logout()
+)
+
+const initialState: AuthState = {
+  me: null,
+  status: REQUEST_STATUS.IDLE,
+  error: null,
+  loginStatus: REQUEST_STATUS.IDLE,
+  loginError: null,
+  logoutStatus: REQUEST_STATUS.IDLE,
+  logoutError: null
+};
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -41,33 +73,79 @@ export const authSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       state = initialState;
-
+    },
+    resetLoginError: (state) => {
+      state.loginError = null;
     },
   },
   extraReducers: (builder) => {
+    // Add reducers for additional action types here, and handle loading state as needed
+
+    // Fetch current user info
     builder.addCase(fetchMeInfo.pending, (state) => {
-      state.state = REQUEST_STATUS.LOADING;
+      state.status = REQUEST_STATUS.LOADING;
       state.error = null;
     })
     builder.addCase(fetchMeInfo.rejected, (state, action) => {
-      state.state = REQUEST_STATUS.FAIL;
+      state.status = REQUEST_STATUS.FAIL;
       state.me = null;
       state.error = action.error.message || 'Loading error';
     })
-    // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(fetchMeInfo.fulfilled, (state, action) => {
-      // Add posts to the state array
+      state.status = REQUEST_STATUS.SUCCESS;
       state.me = action.payload;
-      state.state = REQUEST_STATUS.SUCCESS;
+    })
+
+    // Login
+    builder.addCase(loginUser.pending, (state) => {
+      state.loginStatus = REQUEST_STATUS.LOADING;
+      state.loginError = null;
+    })
+    builder.addCase(loginUser.rejected, (state, action) => {
+      state.loginStatus = REQUEST_STATUS.FAIL;
+      state.loginError = action.error.message || 'Login error';
+    })
+    builder.addCase(loginUser.fulfilled, (state, action) => {
+      if (action.payload.ok) {
+        window.location.assign('/');
+      } else {
+        state.loginError = `${action.payload.body.error}: ${action.payload.body.message}`;
+      }
+      state.loginStatus = REQUEST_STATUS.SUCCESS;
+    })
+
+    // Logout
+    builder.addCase(logoutUser.pending, (state) => {
+      state.logoutStatus = REQUEST_STATUS.LOADING;
+      state.logoutError = null;
+    })
+    builder.addCase(logoutUser.rejected, (state, action) => {
+      state.logoutStatus = REQUEST_STATUS.FAIL;
+      state.logoutError = action.error.message || 'Logout error';
+    })
+    builder.addCase(logoutUser.fulfilled, (state, action) => {
+      if (action.payload.ok) {
+        window.location.assign('/');
+      } else {
+        state.logoutError = `${action.payload.body.error}: ${action.payload.body.message}`;
+      }
+      state.logoutStatus = REQUEST_STATUS.SUCCESS;
     })
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { reset: resetAuth } = authSlice.actions;
+export const { reset: resetAuth, resetLoginError } = authSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const getMeInfo = (state: RootState) => state.auth.me;
-export const isLoadingMeInfo = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.auth.state);
+export const isLoadingMeInfo = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.auth.status);
+export const getError = (state: RootState) => state.auth.error;
+
+export const isLoginInProgress = (state: RootState) => state.auth.loginStatus === REQUEST_STATUS.LOADING;
+export const getLoginError = (state: RootState) => state.auth.loginError;
+
+export const isLogoutInProgress = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.auth.state);
+export const getLogoutError = (state: RootState) => state.auth.error;
 
 export default authSlice.reducer
