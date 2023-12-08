@@ -4,11 +4,11 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 
-function Copyright() {
+const Copyright = (props: any) => {
   return (
-    <Typography variant="body2" color="text.secondary" align="center">
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="/">
         Your Website
       </Link>{' '}
       {new Date().getFullYear()}
@@ -18,8 +18,8 @@ function Copyright() {
 }
 
 export interface FooterProps {
-  description: string;
-  title: string;
+  description?: string;
+  title?: string;
 }
 
 export default function Footer(props: FooterProps) {
@@ -39,7 +39,7 @@ export default function Footer(props: FooterProps) {
         >
           {description}
         </Typography>
-        <Copyright />
+        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </Box>
   );
