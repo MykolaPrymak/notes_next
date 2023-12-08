@@ -11,8 +11,8 @@ def auth_base():
 
 @auth_bp.route("/login", methods=['POST'])
 def auth_login():
-    username = request.form.get('username', None)
-    password = request.form.get('password', None)
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
 
     user:User | None = None
     try:
