@@ -34,7 +34,6 @@ def auth_login():
     return jsonify(user.to_dict(short=True))
 
 @auth_bp.route("/logout", methods=['POST'])
-@user_authentificated
 def auth_logout():
     if session.get("is_authenticated") is True:
         session.pop("is_authenticated")

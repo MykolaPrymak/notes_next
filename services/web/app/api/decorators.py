@@ -7,7 +7,7 @@ def user_authentificated(f):
 
     def wrapper(*args, **kwds):
         if session.get("is_authenticated") is not True:
-            return jsonify({'code': 401, "name": "User is not authenticated"}), 401
+            return jsonify({'error': 401, "message": "User is not authenticated"}), 401
 
         return f(*args, **kwds)
 

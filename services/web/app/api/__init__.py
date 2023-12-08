@@ -21,7 +21,7 @@ def hello_world():
 @bp.errorhandler(HTTPException)
 def http_api_error(error):
     print("http_api_error", error)
-    return jsonify({"code": error.code, "name": error.name}), error.code
+    return jsonify({"error": error.code, "message": error.name}), error.code
 
 
 # @bp.errorhandler(Exception)
