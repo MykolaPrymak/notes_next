@@ -11,6 +11,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import PasswordInput from "../PasswordInput";
 import Alert from '@mui/material/Alert';
+import LinearProgress from '@mui/material/LinearProgress';
 
 export interface LoginFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -61,10 +62,11 @@ export const LoginForm: React.FC<LoginFormProps> = (props) => {
           fullWidth
           variant="contained"
           disabled={props.disabled}
-          sx={{ mt: 3, mb: 2 }}
+          sx={{ mt: 3, mb: props.disabled ? 0 : 2 }}
         >
           Sign In
         </Button>
+        {props.disabled && <LinearProgress sx={{maxWidth: "md", mb: 2}} />}
         <Grid container>
           <Grid item xs>
             <Link href="#" variant="body2">
