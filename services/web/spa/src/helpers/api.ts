@@ -36,6 +36,12 @@ export const api : <Type>(resource: string | RequestInfo, options?: RequestInit)
         };
     }
 
+    /**
+     * TODO: allow to cancell request
+     * const controller = new AbortController()
+     * https://redux-toolkit.js.org/api/createAsyncThunk
+     */
+
     const response = await fetch(resource, {
         headers: {
             ...contentTypeHeader,
@@ -54,6 +60,19 @@ export const api : <Type>(resource: string | RequestInfo, options?: RequestInit)
         // headers: JSON.parse(JSON.stringify(response.headers)),
         url: response.url,
     }
+}
+
+
+export const awaitFor = (timeout: number, signal?: AbortSignal) => {
+    return new Promise<void>((resolve, reject) => {
+
+        const timeoutId = setTimeout(() => resolve(), timeout);
+
+        signal?.addEventListener("abort", () => {
+            clearTimeout(timeoutId);
+            reject('Aborted')
+        })
+    });
 }
 
 export default api;
