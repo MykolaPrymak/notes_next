@@ -44,8 +44,6 @@ const Root: React.FC<{ children: React.ReactNode, hideHeader?: boolean }> = ({ c
 const Application: React.FC<Record<string, never>> = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    console.log('dispatch(fetchMeInfo());');
-
     const loadResult = dispatch(fetchMeInfo());
 
     return () => {

@@ -29,13 +29,7 @@ export default function LogoutPage() {
   const isLoading = useSelector(isLogoutInProgress);
   const logoutError = useSelector(getLogoutError);
   
-  console.log({isLoading, logoutError});
-  
-
   React.useEffect(() => {
-    // perform logout request
-    console.log('useEffect -> logoutResult', isLoading);
-    
     const logoutResult = dispatch(logoutUser());
 
     return () => {

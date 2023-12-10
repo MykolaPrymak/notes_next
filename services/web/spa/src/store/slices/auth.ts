@@ -80,8 +80,6 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Add reducers for additional action types here, and handle loading state as needed
-
     // Fetch current user info
     builder.addCase(fetchMeInfo.pending, (state) => {
       state.status = REQUEST_STATUS.LOADING;
@@ -93,8 +91,13 @@ export const authSlice = createSlice({
       state.error = action.error.message || 'Loading error';
     })
     builder.addCase(fetchMeInfo.fulfilled, (state, action) => {
-      state.status = REQUEST_STATUS.SUCCESS;
-      state.me = action.payload;
+      if (action.payload.ok) {
+        state.status = REQUEST_STATUS.SUCCESS;
+        state.me = action.payload.body;
+      } else {
+        state.status = REQUEST_STATUS.FAIL;
+        state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
+      }
     })
 
     // Login
@@ -117,17 +120,14 @@ export const authSlice = createSlice({
 
     // Logout
     builder.addCase(logoutUser.pending, (state, ...args) => {
-      console.log('logoutUser.pending', args)
       state.logoutStatus = REQUEST_STATUS.LOADING;
       state.logoutError = null;
     })
     builder.addCase(logoutUser.rejected, (state, action) => {
-      console.log('logoutUser.rejected', state.logoutStatus)
       state.logoutStatus = REQUEST_STATUS.FAIL;
       state.logoutError = action.error.message || 'Logout error';
     })
     builder.addCase(logoutUser.fulfilled, (state, action) => {
-      console.log('logoutUser.fulfilled')
       if (action.payload.ok) {
         window.location.assign('/');
       } else {
