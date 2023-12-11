@@ -14,15 +14,15 @@ def create_tags_safe(tag_names: list[str]):
 @posts_bp.route("/")
 def posts_list():
     tag = request.args.get('tag')
-    user_id = request.args.get('user_id')
+    author_username = request.args.get('author')
     page = max(request.args.get('page', 1, int), 1)
     per_page = normalize_page_num(request.args.get('limit', 10, int))
 
     db_query = Post.query
 
     # Apply filters
-    if (user_id is not None):
-        db_query = db_query.filter_by(user_id=user_id)
+    if (author_username is not None):
+        db_query = db_query.filter(Post.author.has(username=author_username))
 
     if (tag is not None):
         db_query = db_query.filter(Post.tags.any(name=tag))
