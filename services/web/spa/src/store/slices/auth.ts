@@ -124,8 +124,12 @@ export const authSlice = createSlice({
       state.logoutError = null;
     })
     builder.addCase(logoutUser.rejected, (state, action) => {
-      state.logoutStatus = REQUEST_STATUS.FAIL;
-      state.logoutError = action.error.message || 'Logout error';
+      if (action.meta.aborted) {
+        state.logoutStatus = REQUEST_STATUS.IDLE;
+      } else {
+        state.logoutStatus = REQUEST_STATUS.FAIL;
+        state.logoutError = action.error.message || 'Logout error';
+      }
     })
     builder.addCase(logoutUser.fulfilled, (state, action) => {
       if (action.payload.ok) {
