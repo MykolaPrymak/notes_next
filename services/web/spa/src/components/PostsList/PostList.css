@@ -8,3 +8,7 @@
 .post-item .tag:last-of-type {
     margin-right: 0;
 }
+.post-item .post-item-link {
+    color: inherit;
+    text-decoration: inherit;
+}

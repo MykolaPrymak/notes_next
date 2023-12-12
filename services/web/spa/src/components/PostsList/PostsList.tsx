@@ -23,7 +23,16 @@ const filterByTag: (tag: string, filterBy: any) => (evt: React.MouseEvent) => vo
 
 export default function PostsList(props: PostsListProps) {
   const { posts, filterBy } = props;
-
+  /**
+   * Generating a SLUG string that contains a post.id and a "normalized" post title
+   * 
+   * "normalized title" means that any sequence of non-alpabetical symbol will be replaced with "_"
+   * 
+   * @param post The Post object for which we generating the SLUG
+   * @returns a SLUG string to use in URL
+   */
+  const getPostSlug = (post: Post) => `${post.id}-${post.title.toLocaleLowerCase().replace(/[^\p{L}]+/gu, ' ').trim().replace(/\s+/g, '_')}`;
+  
   return (
     <Grid
       item
@@ -60,7 +69,7 @@ export default function PostsList(props: PostsListProps) {
     >
       {posts.map((post, idx) => (
         <div className="post-item" key={`${idx}_${post.id}`}>
-          <Typography variant="h4">{post.title}</Typography>
+          <Typography variant="h4"><Link to={`/posts/${getPostSlug(post)}`} className="post-item-link">{post.title}</Link></Typography>
 
           <Typography className="post-date-author"><em>{post.created_at} by <Link to={`/?author=${post.author.username}`}>{post.author.username}</Link></em></Typography>
 
