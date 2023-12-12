@@ -1,18 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { RootState } from '../';
 import { REQUEST_STATUS } from "../consts";
-import type { RootState } from '../'
 
 import { loadPosts } from "../../api/posts";
+import { API_VALUE_TYPES } from '../../helpers/api';
 
 // First, create the thunk
 export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts',
-  async () => {
-    const response = await loadPosts();
-    return response;
-  }
+  async (args: Map<POST_API_ARG_NAMES, API_VALUE_TYPES>) => await loadPosts(args)
 )
 
 export type PostAPIResponse = {
@@ -38,16 +34,19 @@ export type Post = {
   updated_at: string,
 }
 
+export type POST_API_ARG_NAMES = "page" | "limit" | "tag" | "author";
+
+
 export interface PostsState {
   posts: Post[];
-  currentPage: number;
+  // currentPage: number;
+  // postsPerPage: number;
   totalPosts: number;
-  state: REQUEST_STATUS;
+  status: REQUEST_STATUS;
   error: PostStateErrorType;
 }
 
-
-const initialState: PostsState = { posts: [], currentPage: 1, totalPosts: 0, state: REQUEST_STATUS.IDLE, error: null };
+const initialState: PostsState = { posts: [], totalPosts: 0, status: REQUEST_STATUS.IDLE, error: null };
 
 
 export const postsSlice = createSlice({
@@ -55,31 +54,36 @@ export const postsSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state = initialState;
+;
 
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPosts.pending, (state) => {
-      state.state = REQUEST_STATUS.LOADING;
+      state.status = REQUEST_STATUS.LOADING;
       state.error = null;
     })
     builder.addCase(fetchPosts.rejected, (state, action) => {
-      state.state = REQUEST_STATUS.FAIL;
-      state.error = action.error.message || 'Loading error';
+      if (action.meta.aborted) {
+        state.status = REQUEST_STATUS.IDLE;
+      } else {
+        state.status = REQUEST_STATUS.FAIL;
+        state.error = action.error.message || 'Loading error';
+      }
     })
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(fetchPosts.fulfilled, (state, action) => {
-    // Add posts to the state array
-      state.posts.push(...action.payload.posts);
-      state.totalPosts = action.payload.count;
-      state.state = REQUEST_STATUS.SUCCESS;
+      // Add posts to the state array
+      if (action.payload.ok) {
+        state.posts = [...action.payload.body.posts];
+        state.totalPosts = action.payload.body.count;
+        state.status = REQUEST_STATUS.SUCCESS;
+      } else {
+        state.status = REQUEST_STATUS.FAIL;
+        state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
+      }
     })
-    }
+  }
 })
 
 // Action creators are generated for each case reducer function
@@ -87,6 +91,7 @@ export const { reset: resetPosts } = postsSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectPosts = (state: RootState) => state.posts.posts;
-export const isLoadingPosts = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.posts.state);
+export const currentPage = (state: RootState) => state.posts.posts;
+export const isLoadingPosts = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.posts.status);
 
 export default postsSlice.reducer

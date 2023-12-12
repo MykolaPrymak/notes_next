@@ -1,11 +1,10 @@
-import { PostAPIResponse } from "../store/slices/posts"
+import api, { API_RESPONSE_BODY, API_VALUE_TYPES, map_to_url_search_params } from "../helpers/api";
+import { POST_API_ARG_NAMES, PostAPIResponse } from "../store/slices/posts";
 
-export const loadPosts: (offset?: number, limit?: number) => Promise<PostAPIResponse> = async (offset = 0, limit = 10) => {
-    try {
-        const response = await fetch("/api/posts/?page=1&limit=20");
-        return await response.json();
-    } catch (e) {
-        console.log('load posts failed', e)
-    }
-    return null;
+
+export const loadPosts: (params: Map<POST_API_ARG_NAMES, API_VALUE_TYPES>) => Promise<API_RESPONSE_BODY<PostAPIResponse>> = async (params) => {
+
+    const urlParams = map_to_url_search_params(params);
+   
+    return await api(`/api/posts/${urlParams.size ? `?${urlParams.toString()}` : ''}`);
 }

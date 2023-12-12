@@ -1,3 +1,10 @@
-.post-item .markdown {
+/* .post-item .markdown {
     margin-left: 1em;
+} */
+
+.post-item .tag {
+    margin-right: 1em;
+}
+.post-item .tag:last-of-type {
+    margin-right: 0;
 }

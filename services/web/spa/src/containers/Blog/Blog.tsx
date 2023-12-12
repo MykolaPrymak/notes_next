@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux'
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { Button, Pagination, Skeleton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -15,11 +18,9 @@ import PostsList from '../../components/PostsList';
 
 
 // Redux
-import { fetchPosts, resetPosts, selectPosts, isLoadingPosts } from '../../store/slices/posts'
+import { fetchPosts, resetPosts, selectPosts, isLoadingPosts, POST_API_ARG_NAMES } from '../../store/slices/posts'
 import { useAppDispatch } from '../../store'
-import { useSelector } from 'react-redux'
-import { Button, Skeleton } from '@mui/material';
-import { LocalFireDepartment } from '@mui/icons-material';
+import { ApiArgumentDescription, process_url_search_params } from '../../helpers/api';
 
 const sections = [
   { title: 'Technology', url: '#' },
@@ -88,33 +89,66 @@ const sidebar = {
 
 const SkeletonPost: React.FC = () => (
   <>
-  <Grid
+    <Grid
       item
       xs={12}
-      >
+    >
 
-    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-    <Skeleton variant="text" sx={{ fontSize: '0.5rem' }} />
-    <Skeleton variant="rectangular" height={250} />
-      </Grid>
+      <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+      <Skeleton variant="text" sx={{ fontSize: '0.5rem' }} />
+      <Skeleton variant="rectangular" height={250} />
+    </Grid>
   </>
 );
+
+
 
 export default function Blog() {
   const dispatch = useAppDispatch();
   const posts = useSelector(selectPosts)
   const isLoading = useSelector(isLoadingPosts)
+  const [searchParam, setSearchParam] = useSearchParams();
+
+  const setFilterBy = useCallback((key: string, value: string) => {
+    searchParam.set(key, value);
+    setSearchParam(searchParam);
+  }, [searchParam.toString()]);
+
+
+  const api_args: ApiArgumentDescription<POST_API_ARG_NAMES>[] = [
+    {
+      key: "page",
+      defaultValue: 1,
+      type: "number"
+    },
+    {
+      key: "limit",
+      defaultValue: 10,
+      type: "number"
+    },
+    {
+      key: "tag",
+      defaultValue: null,
+      type: "string"
+    },
+    {
+      key: "author",
+      defaultValue: null,
+      type: "string"
+    },
+  ];
 
   // Load post at component load
   useEffect(() => {
     console.log('dispatch(fetchPosts());');
 
-    const loadResult = dispatch(fetchPosts());
+
+    const loadResult = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
 
     return () => {
       loadResult.abort();
     }
-  }, [])
+  }, [searchParam.toString()])
 
   return (
     <>
@@ -129,7 +163,7 @@ export default function Blog() {
           </Grid> */}
 
           <Grid container spacing={1} sx={{ mt: 3 }}>
-            <PostsList title="From the firehose" posts={posts} />
+            <PostsList posts={posts} filterBy={setFilterBy} />
             {isLoading && <SkeletonPost />}
             {/* <Sidebar
               title={sidebar.title}
@@ -137,7 +171,12 @@ export default function Blog() {
               archives={sidebar.archives}
               social={sidebar.social}
             /> */}
-            {!isLoading && <Button onClick={() => dispatch(fetchPosts())}>Load more</Button>}
+            {/* <Grid item>
+            {!isLoading && <Button onClick={() => dispatch(fetchPosts(searchParam))}>Load more</Button>}
+            </Grid> */}
+            <Grid item>
+              <Pagination count={10} size="large" shape="rounded" />
+            </Grid>
           </Grid>
         </main>
       </Container>
