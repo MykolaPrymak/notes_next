@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Blog from "../Blog/Blog";
+import Post from "../Post";
 import Login from "../Login";
 import Logout from "../Logout";
 
@@ -54,6 +55,7 @@ const Application: React.FC<Record<string, never>> = () => {
     <BrowserRouter  >
       <Routes>
         <Route path="/" element={<Blog />} />
+        <Route path="/posts/:postSlug" element={<Root hideHeader={true}><Post /></Root>} />
         <Route path="/login" element={<Root hideHeader={true}><Login /></Root>} />
         <Route path="/logout" element={<Root hideHeader={true}><Logout /></Root>} />
         <Route path="/*" element={<Root><p>Not found</p></Root>} />
