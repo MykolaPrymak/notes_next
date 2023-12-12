@@ -18,7 +18,7 @@ import PostsList from '../../components/PostsList';
 
 
 // Redux
-import { fetchPosts, resetPosts, selectPosts, isLoadingPosts, POST_API_ARG_NAMES } from '../../store/slices/posts'
+import { fetchPosts, resetPosts, selectPosts, isLoadingPosts, POST_API_ARG_NAMES, selectTotalPostCount } from '../../store/slices/posts'
 import { useAppDispatch } from '../../store'
 import { ApiArgumentDescription, process_url_search_params } from '../../helpers/api';
 
@@ -105,16 +105,27 @@ const SkeletonPost: React.FC = () => (
 
 export default function Blog() {
   const dispatch = useAppDispatch();
-  const posts = useSelector(selectPosts)
-  const isLoading = useSelector(isLoadingPosts)
+  const posts = useSelector(selectPosts);
+  const totalPostCount = useSelector(selectTotalPostCount);
+  const isLoading = useSelector(isLoadingPosts);
   const [searchParam, setSearchParam] = useSearchParams();
 
   const setFilterBy = useCallback((key: string, value: string) => {
     searchParam.set(key, value);
+    searchParam.delete("page");
     setSearchParam(searchParam);
   }, [searchParam.toString()]);
 
 
+  const onPageChange = (evt: React.ChangeEvent<any>, page: number) => {
+    evt.preventDefault();
+    if (page > 1) {
+      searchParam.set("page", String(page));
+    } else {
+      searchParam.delete("page");
+    }
+    setSearchParam(searchParam);
+  }
   const api_args: ApiArgumentDescription<POST_API_ARG_NAMES>[] = [
     {
       key: "page",
@@ -123,7 +134,7 @@ export default function Blog() {
     },
     {
       key: "limit",
-      defaultValue: 10,
+      defaultValue: 3,
       type: "number"
     },
     {
@@ -138,17 +149,32 @@ export default function Blog() {
     },
   ];
 
+  const queryParam = process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args);
+  const currentPage = Number(queryParam.get("page")) || 1;
+  const postPerPage = Number(queryParam.get("limit"));
+  const totalPages = Math.ceil(totalPostCount / postPerPage) || 1;
+
   // Load post at component load
   useEffect(() => {
     console.log('dispatch(fetchPosts());');
-
 
     const loadResult = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
 
     return () => {
       loadResult.abort();
     }
-  }, [searchParam.toString()])
+  }, [searchParam.toString()]);
+
+  // Load post at component load
+  useEffect(() => {
+    console.log('dispatch(fetchPosts());');
+
+    const loadResult = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
+
+    return () => {
+      loadResult.abort();
+    }
+  }, [totalPostCount]);
 
   return (
     <>
@@ -174,9 +200,10 @@ export default function Blog() {
             {/* <Grid item>
             {!isLoading && <Button onClick={() => dispatch(fetchPosts(searchParam))}>Load more</Button>}
             </Grid> */}
-            <Grid item>
-              <Pagination count={10} size="large" shape="rounded" />
+            {(!isLoading && totalPages > 1) && <Grid item>
+              <Pagination count={totalPages} page={currentPage} onChange={onPageChange} size="large" shape="rounded" />
             </Grid>
+            }
           </Grid>
         </main>
       </Container>

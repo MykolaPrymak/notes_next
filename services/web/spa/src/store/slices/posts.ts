@@ -91,7 +91,7 @@ export const { reset: resetPosts } = postsSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectPosts = (state: RootState) => state.posts.posts;
-export const currentPage = (state: RootState) => state.posts.posts;
+export const selectTotalPostCount = (state: RootState) => state.posts.totalPosts;
 export const isLoadingPosts = (state: RootState) => [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.posts.status);
 
 export default postsSlice.reducer
