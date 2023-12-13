@@ -1,0 +1,1 @@
+export { PostPageContentProp, default } from './PostPageContent';

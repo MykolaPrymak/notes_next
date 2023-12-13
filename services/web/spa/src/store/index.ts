@@ -1,17 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux'
-import postsReducer, { PostsState } from './slices/posts'
 import authReducer, { AuthState } from './slices/auth'
+import postReducer, { PostState } from './slices/post'
+import postsReducer, { PostsState } from './slices/posts'
 
 interface CombinedState {
-    posts: PostsState;
     auth: AuthState;
+    posts: PostsState;
+    post: PostState;
 }
 
 export const store = configureStore<CombinedState>({
     reducer: {
-        posts: postsReducer,
         auth: authReducer,
+        posts: postsReducer,
+        post: postReducer,
     }
 });
 
