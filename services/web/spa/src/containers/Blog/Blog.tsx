@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux'
-import { useLocation, useSearchParams } from 'react-router-dom';
-import { Button, Pagination, Skeleton } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
+import Pagination from '@mui/material/Pagination';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/Twitter';
+// import GitHubIcon from '@mui/icons-material/GitHub';
+// import FacebookIcon from '@mui/icons-material/Facebook';
+// import TwitterIcon from '@mui/icons-material/Twitter';
 
 import Header from '../../components/Header';
 // import Sidebar from '../../components/Sidebar';
@@ -18,9 +18,10 @@ import PostsList from '../../components/PostsList';
 
 
 // Redux
-import { fetchPosts, resetPosts, selectPosts, isLoadingPosts, POST_API_ARG_NAMES, selectTotalPostCount } from '../../store/slices/posts'
+import { fetchPosts, selectPosts, isLoadingPosts, POST_API_ARG_NAMES, selectTotalPostCount } from '../../store/slices/posts'
 import { useAppDispatch } from '../../store'
 import { ApiArgumentDescription, process_url_search_params } from '../../helpers/api';
+import PostSkeleton from '../../components/PostSkeleton';
 
 const sections = [
   { title: 'Technology', url: '#' },
@@ -35,6 +36,7 @@ const sections = [
   { title: 'Travel', url: '#' },
 ];
 
+/*
 const mainFeaturedPost = {
   title: 'Title of a longer featured blog post',
   description:
@@ -86,21 +88,7 @@ const sidebar = {
     { name: 'Facebook', icon: FacebookIcon },
   ],
 };
-
-const SkeletonPost: React.FC = () => (
-  <>
-    <Grid
-      item
-      xs={12}
-    >
-
-      <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-      <Skeleton variant="text" sx={{ fontSize: '0.5rem' }} />
-      <Skeleton variant="rectangular" height={250} />
-    </Grid>
-  </>
-);
-
+*/
 
 
 export default function Blog() {
@@ -190,7 +178,7 @@ export default function Blog() {
 
           <Grid container spacing={1} sx={{ mt: 3 }}>
             <PostsList posts={posts} filterBy={setFilterBy} />
-            {isLoading && <SkeletonPost />}
+            {isLoading && <PostSkeleton />}
             {/* <Sidebar
               title={sidebar.title}
               description={sidebar.description}
