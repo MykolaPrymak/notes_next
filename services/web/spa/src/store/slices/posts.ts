@@ -54,13 +54,17 @@ export const postsSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-;
-
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the Immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      state = initialState;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPosts.pending, (state) => {
       state.status = REQUEST_STATUS.LOADING;
+      state.posts = [];
       state.error = null;
     })
     builder.addCase(fetchPosts.rejected, (state, action) => {
