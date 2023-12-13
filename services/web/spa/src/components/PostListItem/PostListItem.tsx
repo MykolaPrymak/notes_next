@@ -40,7 +40,7 @@ export default function PostListItem(props: PostListItemProp) {
     <div className="post-item">
       <Typography variant="h4"><Link to={`/posts/${getPostSlug(post)}`} className="post-item-link">{post.title}</Link></Typography>
 
-      <Typography className="post-date-author"><em>{post.created_at} by <Link to={`/?author=${post.author.username}`}>{post.author.username}</Link></em></Typography>
+      <Typography className="post-date-author"><em>{post.created_at} by <Link to={`/?author=${encodeURIComponent(post.author.username)}`}>{post.author.username}</Link></em></Typography>
 
       <Markdown className="markdown clipped">
         {post.body}

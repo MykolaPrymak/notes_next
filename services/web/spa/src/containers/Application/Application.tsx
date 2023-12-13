@@ -29,8 +29,12 @@ const sections = [
 ];
 
 const Root: React.FC<{ children: React.ReactNode, hideHeader?: boolean }> = ({ children, hideHeader = false }) => <>
-  <Container maxWidth="lg">
-    {!hideHeader &&<Header title="Notes" sections={sections} />}
+  <Container maxWidth="lg" sx={{
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+  }}>
+    {!hideHeader && <Header title="Notes" sections={sections} />}
     <Box sx={{ my: 4 }}>
       {children}
       <Outlet />
@@ -54,8 +58,8 @@ const Application: React.FC<Record<string, never>> = () => {
   return (
     <BrowserRouter  >
       <Routes>
-        <Route path="/" element={<Blog />} />
-        <Route path="/posts/:postSlug" element={<Root hideHeader={true}><Post /></Root>} />
+        <Route path="/" element={<Root><Blog /></Root>} />
+        <Route path="/posts/:postSlug" element={<Root><Post /></Root>} />
         <Route path="/login" element={<Root hideHeader={true}><Login /></Root>} />
         <Route path="/logout" element={<Root hideHeader={true}><Logout /></Root>} />
         <Route path="/*" element={<Root><p>Not found</p></Root>} />

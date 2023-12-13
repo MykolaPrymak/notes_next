@@ -113,6 +113,15 @@ export default function Blog() {
       searchParam.delete("page");
     }
     setSearchParam(searchParam);
+
+    // Scroll to top if user change page with pagination
+    /*
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto',
+    });
+    */
   }
   const api_args: ApiArgumentDescription<POST_API_ARG_NAMES>[] = [
     {
@@ -122,7 +131,7 @@ export default function Blog() {
     },
     {
       key: "limit",
-      defaultValue: 3,
+      defaultValue: 5,
       type: "number"
     },
     {
@@ -165,40 +174,31 @@ export default function Blog() {
   }, [totalPostCount]);
 
   return (
-    <>
-      <Container maxWidth="lg">
-        <Header title="Blog" sections={sections} />
-        <main>
-          {/* <MainFeaturedPost post={mainFeaturedPost} /> */}
-          {/* <Grid container spacing={4}>
+    <main>
+      {/* <MainFeaturedPost post={mainFeaturedPost} /> */}
+      {/* <Grid container spacing={4}>
             {featuredPosts.map((post) => (
               <FeaturedPost key={post.title} post={post} />
             ))} 
           </Grid> */}
 
-          <Grid container spacing={1} sx={{ mt: 3 }}>
-            <PostsList posts={posts} filterBy={setFilterBy} />
-            {isLoading && <PostSkeleton />}
-            {/* <Sidebar
+      <Grid container spacing={1} sx={{ mt: 3 }}>
+        <PostsList posts={posts} filterBy={setFilterBy} />
+        {isLoading && <PostSkeleton times={postPerPage} />}
+        {/* <Sidebar
               title={sidebar.title}
               description={sidebar.description}
               archives={sidebar.archives}
               social={sidebar.social}
             /> */}
-            {/* <Grid item>
+        {/* <Grid item>
             {!isLoading && <Button onClick={() => dispatch(fetchPosts(searchParam))}>Load more</Button>}
             </Grid> */}
-            {(!isLoading && totalPages > 1) && <Grid item>
-              <Pagination count={totalPages} page={currentPage} onChange={onPageChange} size="large" shape="rounded" />
-            </Grid>
-            }
-          </Grid>
-        </main>
-      </Container>
-      <Footer
-        title="Footer"
-        description="Something here to give the footer a purpose!"
-      />
-    </>
+        {(!isLoading && totalPages > 1) && <Grid item>
+          <Pagination count={totalPages} page={currentPage} onChange={onPageChange} size="large" shape="rounded" />
+        </Grid>
+        }
+      </Grid>
+    </main>
   );
 }
