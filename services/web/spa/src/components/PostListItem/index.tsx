@@ -1,0 +1,1 @@
+export { PostListItemProp, default } from './PostListItem';
