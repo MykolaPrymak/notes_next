@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import { Post } from '../../store/slices/posts';
 import "./PostListItem.css";
+import Paper from '@mui/material/Paper';
 
 export interface PostListItemProp {
   post: Post;
@@ -37,8 +38,11 @@ export default function PostListItem(props: PostListItemProp) {
   const { post, filterBy } = props;
 
   return (
-    <div className="post-item">
-      <Typography variant="h4"><Link to={`/posts/${getPostSlug(post)}`} className="post-item-link">{post.title}</Link></Typography>
+    <Paper className="post-item" elevation={1} sx={{
+      p: 3,
+      mb: 3,
+    }}>
+      <Typography variant="h4" className='post-title'><Link to={`/posts/${getPostSlug(post)}`} className="post-item-link">{post.title}</Link></Typography>
 
       <Typography className="post-date-author"><em>{post.created_at} by <Link to={`/?author=${encodeURIComponent(post.author.username)}`}>{post.author.username}</Link></em></Typography>
 
@@ -53,6 +57,6 @@ export default function PostListItem(props: PostListItemProp) {
         href={`/?tag=${encodeURIComponent(tag)}`}
         onClick={filterByTag(tag, filterBy)}
         clickable />)}
-    </div>
+    </Paper>
   );
 }

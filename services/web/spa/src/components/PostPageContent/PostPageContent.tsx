@@ -32,13 +32,10 @@ export default function PostPageContent(props: PostPageContentProp) {
         pt: 0,
         pb: 1,
         mb: 2,
-        maxHeight: "5em",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        borderRadius: "0 0 15px 15px",
+        overflow: "auto",
       }
     }}>
-      <Typography variant="h4">{post.title}</Typography>
+      <Typography variant="h4" className='post-title'>{post.title}</Typography>
 
       <Typography className="post-date-author"><em>{post.created_at} by <Link to={`/?author=${encodeURIComponent(post.author.username)}`}>{post.author.username}</Link></em></Typography>
 
