@@ -6,11 +6,14 @@ import { Link } from 'react-router-dom';
 import { Post } from '../../store/slices/posts';
 import "./PostListItem.css";
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export interface PostListItemProp {
   post: Post;
   filterBy: (key: string, value: string) => void;
-
+  onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
 }
 
 /**
@@ -35,7 +38,7 @@ const filterByTag: (tag: string, filterBy: any) => (evt: React.MouseEvent) => vo
 };
 
 export default function PostListItem(props: PostListItemProp) {
-  const { post, filterBy } = props;
+  const { post, filterBy, onDelete } = props;
 
   return (
     <Paper className="post-item" elevation={1} sx={{
@@ -57,6 +60,9 @@ export default function PostListItem(props: PostListItemProp) {
         href={`/?tag=${encodeURIComponent(tag)}`}
         onClick={filterByTag(tag, filterBy)}
         clickable />)}
+      <IconButton aria-label="delete" onClick={onDelete(post)}>
+        <DeleteIcon />
+      </IconButton>
     </Paper>
   );
 }

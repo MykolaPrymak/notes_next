@@ -2,13 +2,18 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '..';
 import { REQUEST_STATUS } from "../consts";
 
-import { loadPost } from "../../api/post";
+import { loadPost, deletePost as deletePostRequest } from "../../api/post";
 import { Post } from './posts';
 
 // First, create the thunk
 export const fetchPost = createAsyncThunk(
-  'posts/fetchPost',
+  'post/fetchPost',
   async (postId: string) => await loadPost(postId)
+)
+
+export const deletePost = createAsyncThunk(
+  'post/deletePost',
+  async (postId: string) => await deletePostRequest(postId)
 )
 
 
@@ -16,9 +21,10 @@ export interface PostState {
   post: Post | null;
   status: REQUEST_STATUS;
   error: string | null;
+  deleteRequestStatus: REQUEST_STATUS;
 }
 
-const initialState: PostState = { post: null, status: REQUEST_STATUS.IDLE, error: null };
+const initialState: PostState = { post: null, status: REQUEST_STATUS.IDLE, error: null, deleteRequestStatus: REQUEST_STATUS.IDLE };
 
 export const postSlice = createSlice({
   name: 'post',
@@ -33,6 +39,9 @@ export const postSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Add reducers for additional action types here, and handle loading state as needed
+
+    // Fetch
     builder.addCase(fetchPost.pending, (state) => {
       state = initialState;
     })
@@ -44,7 +53,6 @@ export const postSlice = createSlice({
         state.error = action.error.message || 'Loading error';
       }
     })
-    // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(fetchPost.fulfilled, (state, action) => {
       // Add posts to the state array
       if (action.payload.ok) {
@@ -52,6 +60,30 @@ export const postSlice = createSlice({
         state.status = REQUEST_STATUS.SUCCESS;
       } else {
         state.status = REQUEST_STATUS.FAIL;
+        state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
+      }
+    })
+
+    // Delete
+    builder.addCase(deletePost.pending, (state) => {
+      state.deleteRequestStatus = REQUEST_STATUS.IDLE;
+      state.error = null;
+    })
+    builder.addCase(deletePost.rejected, (state, action) => {
+      if (action.meta.aborted) {
+        state.deleteRequestStatus = REQUEST_STATUS.IDLE;
+      } else {
+        // TODO: show result notification
+        state.deleteRequestStatus = REQUEST_STATUS.FAIL;
+        state.error = action.error.message || 'Loading error';
+      }
+    })
+    builder.addCase(deletePost.fulfilled, (state, action) => {
+      // TODO: show result notification
+      if (action.payload.ok) {
+        state.deleteRequestStatus = REQUEST_STATUS.SUCCESS;
+      } else {
+        state.deleteRequestStatus = REQUEST_STATUS.FAIL;
         state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
       }
     })

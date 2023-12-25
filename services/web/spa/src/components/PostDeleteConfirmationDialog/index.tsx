@@ -1,0 +1,1 @@
+export { ConfirmationDialogProps, default } from './ConfirmationDialog';

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
@@ -18,10 +18,13 @@ import PostsList from '../../components/PostsList';
 
 
 // Redux
-import { fetchPosts, selectPosts, isLoadingPosts, POST_API_ARG_NAMES, selectTotalPostCount } from '../../store/slices/posts'
+import { fetchPosts, selectPosts, resetPosts, isLoadingPosts, POST_API_ARG_NAMES, selectTotalPostCount, Post } from '../../store/slices/posts'
+import { deletePost } from '../../store/slices/post'
 import { useAppDispatch } from '../../store'
 import { ApiArgumentDescription, process_url_search_params } from '../../helpers/api';
 import PostSkeleton from '../../components/PostSkeleton';
+import PostDeleteConfirmationDialog from '../../components/PostDeleteConfirmationDialog';
+
 
 const sections = [
   { title: 'Technology', url: '#' },
@@ -97,6 +100,8 @@ export default function Blog() {
   const totalPostCount = useSelector(selectTotalPostCount);
   const isLoading = useSelector(isLoadingPosts);
   const [searchParam, setSearchParam] = useSearchParams();
+  const [isDeleteAlerShown, setDeleteAlerShown] = useState<boolean>(false);
+  const [postToDelete, setPostToDelete] = useState<Post | null>(null);
 
   const setFilterBy = useCallback((key: string, value: string) => {
     searchParam.set(key, value);
@@ -146,14 +151,36 @@ export default function Blog() {
     },
   ];
 
+  const onPostDelete: (post: Post) => React.MouseEventHandler<HTMLElement> = (post: Post) => (evt) => {
+    evt.preventDefault();
+    setPostToDelete(post);
+    setDeleteAlerShown(true);
+  };
+
+  const onDeleteConfirmationClose = () => {
+    setDeleteAlerShown(false);
+    setPostToDelete(null);
+  };
+
+  const handlePostDelete: React.MouseEventHandler<HTMLElement> = (evt) => {
+    evt.preventDefault();
+    console.log("we should delete:", postToDelete);
+    if (postToDelete) {
+      dispatch(deletePost(postToDelete.id)).then(() => dispatch(resetPosts()));
+    }
+    onDeleteConfirmationClose();
+  }
+  // console.log({totalPostCount});
+  
+
   const queryParam = process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args);
   const currentPage = Number(queryParam.get("page")) || 1;
   const postPerPage = Number(queryParam.get("limit"));
   const totalPages = Math.ceil(totalPostCount / postPerPage) || 1;
 
-  // Load post at component load
+  // Load post at component load or navigation
+  // console.log('dispatch(fetchPosts()); / totalPostCount / searchParam', totalPostCount, searchParam.toString());
   useEffect(() => {
-    console.log('dispatch(fetchPosts());');
 
     const loadResult = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
 
@@ -162,16 +189,7 @@ export default function Blog() {
     }
   }, [searchParam.toString()]);
 
-  // Load post at component load
-  useEffect(() => {
-    console.log('dispatch(fetchPosts());');
-
-    const loadResult = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
-
-    return () => {
-      loadResult.abort();
-    }
-  }, [totalPostCount]);
+  // TODO: What actions should we do if totalPostCount was changed? Reset the list/Load again/other?
 
   return (
     <main>
@@ -183,7 +201,7 @@ export default function Blog() {
           </Grid> */}
 
       <Grid container spacing={1} sx={{ mt: 3 }}>
-        <PostsList posts={posts} filterBy={setFilterBy} />
+        <PostsList posts={posts} filterBy={setFilterBy} onDelete={onPostDelete} />
         {isLoading && <PostSkeleton times={postPerPage} />}
         {/* <Sidebar
               title={sidebar.title}
@@ -199,6 +217,12 @@ export default function Blog() {
         </Grid>
         }
       </Grid>
+      <PostDeleteConfirmationDialog
+        post={postToDelete}
+        isOpen={isDeleteAlerShown}
+        onClose={onDeleteConfirmationClose}
+        onConfirm={handlePostDelete}
+      />
     </main>
   );
 }
