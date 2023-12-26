@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import Notifications from "../Notifications";
 import Blog from "../Blog";
 import Post from "../Post";
 import Login from "../Login";
@@ -43,9 +44,7 @@ const Root: React.FC<{ children: React.ReactNode, hideHeader?: boolean }> = ({ c
       title="Footer"
       description="Something here to give the footer a purpose!"
     />
-    {/*
-    TODO: implement application wide notification (request failed, operation successfull)
-    <Notifications /> */}
+    <Notifications />
   </Container>
 </>;
 
@@ -57,7 +56,8 @@ const Application: React.FC<Record<string, never>> = () => {
     return () => {
       loadResult.abort();
     }
-  }, [])
+  }, []);
+
   return (
     <BrowserRouter  >
       <Routes>
