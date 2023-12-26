@@ -40,18 +40,17 @@ export interface AuthState {
 // First, create the thunk
 export const fetchMeInfo = createAsyncThunk(
   'auth/fetchMeInfo',
-  async () => await loadMeInfo()
+  async (arg, thunkAPI) => await loadMeInfo(thunkAPI)
 )
 
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async (credentials: LoginData) => await login(credentials)
+  async (credentials: LoginData, thunkAPI) => await login(credentials, thunkAPI)
 )
 
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
-  // TODO: use thunkAPI.signal to perform aborting of fetch
-  async () => await logout()
+  async (arg, thunkAPI) => await logout(thunkAPI)
 )
 
 const initialState: AuthState = {

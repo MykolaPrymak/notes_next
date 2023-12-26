@@ -8,7 +8,7 @@ import { API_VALUE_TYPES } from '../../helpers/api';
 // First, create the thunk
 export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts',
-  async (args: Map<POST_API_ARG_NAMES, API_VALUE_TYPES>) => await loadPosts(args)
+  async (args: Map<POST_API_ARG_NAMES, API_VALUE_TYPES>, thunkAPI) => await loadPosts(args, thunkAPI)
 )
 
 export type PostAPIResponse = {

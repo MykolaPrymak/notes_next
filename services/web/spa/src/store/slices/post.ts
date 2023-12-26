@@ -8,12 +8,12 @@ import { Post } from './posts';
 // First, create the thunk
 export const fetchPost = createAsyncThunk(
   'post/fetchPost',
-  async (postId: string) => await loadPost(postId)
+  async (postId: string, thunkAPI) => await loadPost(postId, thunkAPI)
 )
 
 export const deletePost = createAsyncThunk(
   'post/deletePost',
-  async (postId: string) => await deletePostRequest(postId)
+  async (postId: string, thunkAPI) => await deletePostRequest(postId, thunkAPI)
 )
 
 

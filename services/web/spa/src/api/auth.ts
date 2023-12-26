@@ -1,11 +1,12 @@
+import { GetThunkAPI } from "@reduxjs/toolkit/dist/createAsyncThunk";
 import { Me, LoginReply, LoginData } from "../store/slices/auth";
 import api, { API_RESPONSE_BODY } from "../helpers/api";
 
-export const loadMeInfo: () => Promise<API_RESPONSE_BODY<Me>> = async () => {
-    return await api("/api/auth/me");
+export const loadMeInfo: (thunkAPI: GetThunkAPI<any>) => Promise<API_RESPONSE_BODY<Me>> = async (thunkAPI) => {
+    return await api("/api/auth/me", { signal: thunkAPI.signal });
 }
 
-export const login: (credentials: LoginData) => Promise<API_RESPONSE_BODY<LoginReply>> = async (credentials) => {
+export const login: (credentials: LoginData, thunkAPI: GetThunkAPI<any>) => Promise<API_RESPONSE_BODY<LoginReply>> = async (credentials, thunkAPI) => {
     const formData = new FormData();
     formData.append("username", credentials.username);
     formData.append("password", credentials.password);
@@ -17,13 +18,15 @@ export const login: (credentials: LoginData) => Promise<API_RESPONSE_BODY<LoginR
             // Content-Type': 'multipart/form-data',
             // 'Content-Type': undefined,
         },
-        body: JSON.stringify(credentials)
-        //body: formData
+        body: JSON.stringify(credentials),
+        //body: formData,
+        signal: thunkAPI.signal
     });
 }
 
-export const logout: () => Promise<API_RESPONSE_BODY> = async () => {
+export const logout: (thunkAPI: GetThunkAPI<any>) => Promise<API_RESPONSE_BODY> = async (thunkAPI) => {
     return await api("/api/auth/logout", {
-        method: "POST"
+        method: "POST",
+        signal: thunkAPI.signal
     });
 }
