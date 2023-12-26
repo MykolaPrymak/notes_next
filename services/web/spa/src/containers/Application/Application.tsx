@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import Blog from "../Blog/Blog";
+import Blog from "../Blog";
 import Post from "../Post";
 import Login from "../Login";
 import Logout from "../Logout";
@@ -43,6 +43,9 @@ const Root: React.FC<{ children: React.ReactNode, hideHeader?: boolean }> = ({ c
       title="Footer"
       description="Something here to give the footer a purpose!"
     />
+    {/*
+    TODO: implement application wide notification (request failed, operation successfull)
+    <Notifications /> */}
   </Container>
 </>;
 
@@ -60,8 +63,10 @@ const Application: React.FC<Record<string, never>> = () => {
       <Routes>
         <Route path="/" element={<Root><Blog /></Root>} />
         <Route path="/posts/:postSlug" element={<Root><Post /></Root>} />
+        <Route path="/posts/:postSlug/edit" element={<Root><p>Post eidt</p></Root>} />
         <Route path="/login" element={<Root hideHeader={true}><Login /></Root>} />
         <Route path="/logout" element={<Root hideHeader={true}><Logout /></Root>} />
+        <Route path="/search" element={<Root hideHeader={true}><p>Search</p></Root>} />
         <Route path="/*" element={<Root><p>Not found</p></Root>} />
       </Routes>
     </BrowserRouter>
