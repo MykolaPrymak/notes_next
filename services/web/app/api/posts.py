@@ -56,7 +56,7 @@ def single_post_api(post_id: int = None):
         current_user_id = None
 
     if (post.private is True) and (post.user_id is not current_user_id):
-        return jsonify({"code": 404, "name": "Post not found"}), 404
+        return jsonify({"error": 404, "message": "Post not found"}), 404
 
     return jsonify(post.to_dict(include_author=True, include_tags=True))
 
@@ -66,12 +66,12 @@ def single_post_api(post_id: int = None):
 def posts_add():
     # Prepare data
     try:
-        post_data: dict = post_shema.validate(request.form.to_dict())
+        post_data: dict = post_shema.validate(request.json)
     except SchemaError as er:
         print(er)
-        return jsonify({"code": 400, "name": "form validation error"}), 400
+        return jsonify({"error": 400, "message": "form validation error"}), 400
     except:
-        return jsonify({"code": 400, "name": "error"}), 400
+        return jsonify({"error": 400, "message": "error"}), 400
 
     # Add post/tags to DB
     try:
@@ -85,27 +85,26 @@ def posts_add():
 
         return jsonify({"status": "OK", "post": post.to_dict(include_tags=True)})
     except:
-        return jsonify({"code": 500, "name": "Server error"}), 500
+        return jsonify({"error": 500, "message": "Server error"}), 500
 
 @posts_bp.route("/<int:post_id>", methods=["PUT"])
 @user_authentificated
 def update_post_api(post_id: int = None):
     user_id = session.get('user').get('id')
     post:Post = Post.query.get(post_id)
-    # , user_id=user_id).first_or_404()
 
     # Return 404 if we not found post, or current user is not an author of the post
     if (post is None) or (post.user_id is not user_id):
-        return jsonify({"code": 404, "name": "Post not found"}), 404
-
+        return jsonify({"error": 404, "message": "Post not found"}), 404
+    
     # Prepare data
     try:
-        post_data: dict = post_shema.validate(request.form.to_dict())
+        post_data: dict = post_shema.validate(request.json)
     except SchemaError as er:
         print(er)
-        return jsonify({"code": 400, "name": "form validation error"}), 400
+        return jsonify({"error": 400, "message": "form validation error"}), 400
     except:
-        return jsonify({"code": 400, "name": "error"}), 400
+        return jsonify({"error": 400, "message": "error"}), 400
 
     # Update post/tags to DB
     try:
@@ -123,7 +122,7 @@ def update_post_api(post_id: int = None):
 
         return jsonify({"status": "OK", "post": post.to_dict(include_tags=True)})
     except:
-        return jsonify({"code": 500, "name": "Server error"}), 500
+        return jsonify({"error": 500, "message": "Server error"}), 500
 
 @posts_bp.route("/<int:post_id>", methods=["DELETE"])
 @user_authentificated
@@ -131,10 +130,9 @@ def delete_post_api(post_id: int = None):
     current_user_id = session.get('user').get("id")
     post:Post = Post.query.get(post_id)
 
-    print({post})
     # Return 404 if we not found post, or current user is not an author of the post
     if (post is None) or (post.user_id is not current_user_id):
-        return jsonify({"code": 404, "name": "Post not found"}), 404
+        return jsonify({"error": 404, "message": "Post not found"}), 404
 
     try:
         db.session.delete(post)
@@ -142,4 +140,4 @@ def delete_post_api(post_id: int = None):
 
         return jsonify({"status": "OK"})
     except:
-        return jsonify({"code": 500, "name": "Server error"}), 500
+        return jsonify({"error": 500, "message": "Server error"}), 500
