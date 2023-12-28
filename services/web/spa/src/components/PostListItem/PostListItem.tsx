@@ -6,25 +6,16 @@ import { Link } from 'react-router-dom';
 import { Post } from '../../store/slices/posts';
 import "./PostListItem.css";
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { getPostSlug } from '../../helpers/navigation';
 
 export interface PostListItemProp {
   post: Post;
   filterBy: (key: string, value: string) => void;
   onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
 }
-
-/**
- * Generating a SLUG string that contains a post.id and a "normalized" post title
- * 
- * "normalized title" means that any sequence of non-alpabetical symbol will be replaced with "_"
- * 
- * @param post The Post object for which we generating the SLUG
- * @returns a SLUG string to use in URL
- */
-const getPostSlug = (post: Post) => `${post.id}-${post.title.toLocaleLowerCase().replace(/[^\p{L}]+/gu, ' ').trim().replace(/\s+/g, '_')}`;
 
 
 const filterByTag: (tag: string, filterBy: any) => (evt: React.MouseEvent) => void = (tag, filterBy) => {
@@ -63,6 +54,11 @@ export default function PostListItem(props: PostListItemProp) {
       <IconButton aria-label="delete" onClick={onDelete(post)}>
         <DeleteIcon />
       </IconButton>
+      <Link aria-label="edit" to={`/posts/${getPostSlug(post)}/edit`}>
+        <IconButton aria-label="edit">
+          <EditIcon />
+        </IconButton>
+      </Link>
     </Paper>
   );
 }
