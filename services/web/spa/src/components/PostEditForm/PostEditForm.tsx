@@ -9,13 +9,14 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import { Post } from "../../store/slices/posts";
-import { TagInput } from "./TagInput";
+import TagInput from "./TagInput";
 import AlertTitle from "@mui/material/AlertTitle";
+import { PostBody } from "../../store/slices/post";
 
 export interface PostEditFormProps {
-  post: Post;
+  post: Post | PostBody;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  onCancel: (event: React.FormEvent<HTMLFormElement>) => void;
+  onCancel: (event: React.MouseEvent<HTMLElement>) => void;
   disabled: boolean;
   error?: string | null;
   validation?: any;

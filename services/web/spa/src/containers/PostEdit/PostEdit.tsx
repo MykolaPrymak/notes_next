@@ -57,6 +57,8 @@ export default function PostEditContainer() {
     updateAction.then((res) => {
       const apiPayload = res.payload as API_RESPONSE_BODY<Post>;
       if (apiPayload.ok) {
+        console.log(apiPayload);
+        
         navigate(`/posts/${getPostSlug(apiPayload.body)}`);
       }
     });
@@ -70,8 +72,8 @@ export default function PostEditContainer() {
     const thunkAction = dispatch(fetchPost(postId));
 
     return () => {
-      thunkAction.abort();
       dispatch(resetPost());
+      thunkAction.abort();
     };
   }, [postId]);
 

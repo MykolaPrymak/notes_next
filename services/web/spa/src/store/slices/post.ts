@@ -6,12 +6,13 @@ import {
   loadPost,
   deletePost as deletePostRequest,
   updatePost as updatePostRequest,
+  createPost as createPostRequest,
 } from "../../api/post";
 import { Post } from "./posts";
 
 export const createPost = createAsyncThunk(
   "post/createPost",
-  async (post: PostBody, thunkAPI) => await updatePostRequest(post, thunkAPI)
+  async (post: PostBody, thunkAPI) => await createPostRequest(post, thunkAPI)
 );
 
 export const fetchPost = createAsyncThunk(
@@ -34,18 +35,20 @@ export type PostBody = Pick<Post, "title" | "body" | "private" | "tags"> &
 
 export interface PostState {
   post: Post | null;
-  status: REQUEST_STATUS;
+  loadStatus: REQUEST_STATUS;
+  createStatus: REQUEST_STATUS;
+  updateStatus: REQUEST_STATUS;
+  deleteStatus: REQUEST_STATUS;
   error: string | null;
-  updateRequestStatus: REQUEST_STATUS;
-  deleteRequestStatus: REQUEST_STATUS;
 }
 
 const initialState: PostState = {
   post: null,
-  status: REQUEST_STATUS.IDLE,
+  loadStatus: REQUEST_STATUS.IDLE,
+  createStatus: REQUEST_STATUS.IDLE,
+  updateStatus: REQUEST_STATUS.IDLE,
+  deleteStatus: REQUEST_STATUS.IDLE,
   error: null,
-  updateRequestStatus: REQUEST_STATUS.IDLE,
-  deleteRequestStatus: REQUEST_STATUS.IDLE,
 };
 
 export const postSlice = createSlice({
@@ -69,9 +72,9 @@ export const postSlice = createSlice({
     });
     builder.addCase(fetchPost.rejected, (state, action) => {
       if (action.meta.aborted) {
-        state.status = REQUEST_STATUS.IDLE;
+        state.loadStatus = REQUEST_STATUS.IDLE;
       } else {
-        state.status = REQUEST_STATUS.FAIL;
+        state.loadStatus = REQUEST_STATUS.FAIL;
         state.error = action.error.message || "Loading error";
       }
     });
@@ -79,58 +82,81 @@ export const postSlice = createSlice({
       // Add posts to the state array
       if (action.payload.ok) {
         state.post = action.payload.body;
-        state.status = REQUEST_STATUS.SUCCESS;
+        state.loadStatus = REQUEST_STATUS.SUCCESS;
       } else {
-        state.status = REQUEST_STATUS.FAIL;
+        state.loadStatus = REQUEST_STATUS.FAIL;
+        state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
+      }
+    });
+
+    // Create
+    builder.addCase(createPost.pending, (state) => {
+      state.createStatus = REQUEST_STATUS.LOADING;
+      state.error = null;
+    });
+    builder.addCase(createPost.rejected, (state, action) => {
+      if (action.meta.aborted) {
+        state.createStatus = REQUEST_STATUS.IDLE;
+      } else {
+        // TODO: show result notification
+        state.createStatus = REQUEST_STATUS.FAIL;
+        state.error = action.error.message || "Create error";
+      }
+    });
+    builder.addCase(createPost.fulfilled, (state, action) => {
+      // TODO: show result notification
+      if (action.payload.ok) {
+        state.createStatus = REQUEST_STATUS.SUCCESS;
+      } else {
+        state.createStatus = REQUEST_STATUS.FAIL;
         state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
       }
     });
 
     // Update
     builder.addCase(updatePost.pending, (state) => {
-      state.updateRequestStatus = REQUEST_STATUS.LOADING;
+      state.updateStatus = REQUEST_STATUS.LOADING;
       state.error = null;
     });
     builder.addCase(updatePost.rejected, (state, action) => {
       if (action.meta.aborted) {
-        state.updateRequestStatus = REQUEST_STATUS.IDLE;
+        state.updateStatus = REQUEST_STATUS.IDLE;
       } else {
         // TODO: show result notification
-        state.updateRequestStatus = REQUEST_STATUS.FAIL;
-        state.error = action.error.message || "Loading error";
+        state.updateStatus = REQUEST_STATUS.FAIL;
+        state.error = action.error.message || "Update error";
       }
     });
     builder.addCase(updatePost.fulfilled, (state, action) => {
       // TODO: show result notification
       if (action.payload.ok) {
-        state.updateRequestStatus = REQUEST_STATUS.SUCCESS;
-        state.post = null;
+        state.updateStatus = REQUEST_STATUS.SUCCESS;
       } else {
-        state.updateRequestStatus = REQUEST_STATUS.FAIL;
+        state.updateStatus = REQUEST_STATUS.FAIL;
         state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
       }
     });
 
     // Delete
     builder.addCase(deletePost.pending, (state) => {
-      state.deleteRequestStatus = REQUEST_STATUS.LOADING;
+      state.deleteStatus = REQUEST_STATUS.LOADING;
       state.error = null;
     });
     builder.addCase(deletePost.rejected, (state, action) => {
       if (action.meta.aborted) {
-        state.deleteRequestStatus = REQUEST_STATUS.IDLE;
+        state.deleteStatus = REQUEST_STATUS.IDLE;
       } else {
         // TODO: show result notification
-        state.deleteRequestStatus = REQUEST_STATUS.FAIL;
-        state.error = action.error.message || "Loading error";
+        state.deleteStatus = REQUEST_STATUS.FAIL;
+        state.error = action.error.message || "Delete error";
       }
     });
     builder.addCase(deletePost.fulfilled, (state, action) => {
       // TODO: show result notification
       if (action.payload.ok) {
-        state.deleteRequestStatus = REQUEST_STATUS.SUCCESS;
+        state.deleteStatus = REQUEST_STATUS.SUCCESS;
       } else {
-        state.deleteRequestStatus = REQUEST_STATUS.FAIL;
+        state.deleteStatus = REQUEST_STATUS.FAIL;
         state.error = `${action.payload.body.error}: ${action.payload.body.message}`;
       }
     });
@@ -143,15 +169,20 @@ export const { reset: resetPost } = postSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
 export const selectPost = (state: RootState) => state.post.post;
 export const isLoadingPost = (state: RootState) =>
-  [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.post.status);
+  [REQUEST_STATUS.IDLE, REQUEST_STATUS.LOADING].includes(state.post.loadStatus);
 
-export const isPostLoadError = (state: RootState) => state.post.status === REQUEST_STATUS.FAIL;
-export const isPostLoaded = (state: RootState) => state.post.status === REQUEST_STATUS.SUCCESS;
+export const isPostLoadError = (state: RootState) => state.post.loadStatus === REQUEST_STATUS.FAIL;
+export const isPostLoaded = (state: RootState) => state.post.loadStatus === REQUEST_STATUS.SUCCESS;
 
+export const isPostCreating = (state: RootState) => state.post.createStatus === REQUEST_STATUS.LOADING;
+export const isPostCreateError = (state: RootState) => state.post.createStatus === REQUEST_STATUS.FAIL;
+
+
+
+export const isPostUpdating = (state: RootState) => state.post.updateStatus === REQUEST_STATUS.LOADING;
+export const isPostUpdated = (state: RootState) => state.post.updateStatus === REQUEST_STATUS.SUCCESS;
+export const isPostUpdatedError = (state: RootState) => state.post.updateStatus === REQUEST_STATUS.FAIL;
 
 export const getPostRequestError = (state: RootState) => state.post.error;
-export const isPostUpdating = (state: RootState) => state.post.updateRequestStatus === REQUEST_STATUS.LOADING;
-export const isPostUpdated = (state: RootState) => state.post.updateRequestStatus === REQUEST_STATUS.SUCCESS;
-export const isPostUpdatedError = (state: RootState) => state.post.updateRequestStatus === REQUEST_STATUS.FAIL;
 
 export default postSlice.reducer;

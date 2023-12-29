@@ -1,7 +1,7 @@
 export interface API_RESPONSE_BODY<Type = any> {
     ok: boolean;
     status: number;
-    body: Partial<API_ERROR_RESPONSE_BODY> & Partial<API_STATUS_RESPONSE_BODY> & Type;
+    body: Partial<API_ERROR_RESPONSE_BODY> & Type;
     headers?: Headers;
     url: string;
 }
@@ -10,10 +10,6 @@ export interface API_ERROR_RESPONSE_BODY {
     // Short error name
     error: string; // Short error name
     message: string; // Error description
-}
-
-export interface API_STATUS_RESPONSE_BODY {
-    status: "ok";
 }
 
 export type API_ARG_TYPE = "string" | "number" | "boolean";

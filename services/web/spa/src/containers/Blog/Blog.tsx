@@ -1,16 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
 // import GitHubIcon from '@mui/icons-material/GitHub';
 // import FacebookIcon from '@mui/icons-material/Facebook';
 // import TwitterIcon from '@mui/icons-material/Twitter';
 
-import Header from '../../components/Header';
 // import Sidebar from '../../components/Sidebar';
-import Footer from '../../components/Footer';
 
 // import MainFeaturedPost from '../../components/FeaturedPosts/MainFeaturedPost';
 // import FeaturedPost from '../../components/FeaturedPosts/FeaturedPost';
@@ -18,9 +15,9 @@ import PostsList from '../../components/PostsList';
 
 
 // Redux
-import { fetchPosts, selectPosts, resetPosts, isLoadingPosts, POST_API_ARG_NAMES, selectTotalPostCount, Post } from '../../store/slices/posts'
-import { deletePost } from '../../store/slices/post'
-import { useAppDispatch } from '../../store'
+import { fetchPosts, selectPosts, resetPosts, isLoadingPosts, POST_API_ARG_NAMES, selectTotalPostCount, Post } from '../../store/slices/posts';
+import { deletePost } from '../../store/slices/post';
+import { useAppDispatch } from '../../store';
 import { ApiArgumentDescription, process_url_search_params } from '../../helpers/api';
 import PostSkeleton from '../../components/PostSkeleton';
 import PostDeleteConfirmationDialog from '../../components/PostDeleteConfirmationDialog';
@@ -199,7 +196,6 @@ export default function Blog() {
               <FeaturedPost key={post.title} post={post} />
             ))} 
           </Grid> */}
-
       <Grid container spacing={1} sx={{ mt: 3 }}>
         <PostsList posts={posts} filterBy={setFilterBy} onDelete={onPostDelete} />
         {isLoading && <PostSkeleton times={postPerPage} />}

@@ -11,6 +11,7 @@ import Notifications from "../Notifications";
 import Blog from "../Blog";
 import Post from "../Post";
 import PostEdit from "../PostEdit";
+import PostCreate from "../PostCreate";
 import Login from "../Login";
 import Logout from "../Logout";
 
@@ -65,6 +66,7 @@ const Application: React.FC<Record<string, never>> = () => {
         <Route path="/" element={<Root><Blog /></Root>} />
         <Route path="/posts/:postSlug" element={<Root><Post /></Root>} />
         <Route path="/posts/:postSlug/edit" element={<Root><PostEdit /></Root>} />
+        <Route path="/posts/new" element={<Root><PostCreate /></Root>} />
         <Route path="/login" element={<Root hideHeader={true}><Login /></Root>} />
         <Route path="/logout" element={<Root hideHeader={true}><Logout /></Root>} />
         <Route path="/search" element={<Root hideHeader={true}><p>Search</p></Root>} />

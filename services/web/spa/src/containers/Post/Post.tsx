@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Container from '@mui/material/Container';
 import { useParams } from 'react-router-dom';
-import { fetchPost, isLoadingPost, selectPost } from '../../store/slices/post';
+import { fetchPost, isLoadingPost, selectPost, resetPost } from '../../store/slices/post';
 import { useAppDispatch } from '../../store';
 import { useSelector } from 'react-redux';
 import PostSkeleton from '../../components/PostSkeleton';
@@ -24,8 +24,9 @@ export default function PostContainer() {
 
   React.useEffect(() => {
     const thunkAction = dispatch(fetchPost(postId));
-
+    
     return () => {
+      dispatch(resetPost());
       thunkAction.abort();
     }
   }, [postId])
