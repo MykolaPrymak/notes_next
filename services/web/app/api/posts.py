@@ -83,7 +83,7 @@ def posts_add():
         db.session.add(post)
         db.session.commit()
 
-        return jsonify({"status": "OK", "post": post.to_dict(include_tags=True)})
+        return jsonify(post.to_dict(include_tags=True))
     except:
         return jsonify({"error": 500, "message": "Server error"}), 500
 
@@ -120,7 +120,7 @@ def update_post_api(post_id: int = None):
         # db.session.add(post)
         db.session.commit()
 
-        return jsonify({"status": "OK", "post": post.to_dict(include_tags=True)})
+        return jsonify(post.to_dict(include_tags=True))
     except:
         return jsonify({"error": 500, "message": "Server error"}), 500
 
