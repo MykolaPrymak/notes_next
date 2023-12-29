@@ -28,6 +28,9 @@ export const TagAddDialog: React.FC<TagAddDialogProps> = (props) => {
   const {open, onClose, onSubmit} = props;
 
   const handleSubmit:React.FormEventHandler<HTMLFormElement> = (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+
     const data = new FormData(evt.currentTarget);
     const tag = data.get('tag') as string;
 
@@ -147,3 +150,5 @@ export const TagInput: React.FC<TagInputProps> = (props) => {
     </>
   );
 };
+
+export default TagInput;
