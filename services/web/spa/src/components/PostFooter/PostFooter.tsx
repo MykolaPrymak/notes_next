@@ -12,6 +12,7 @@ import "./PostFooter.css";
 
 export interface PostFooterProp {
   post: Post;
+  isEditable: boolean;
   onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
 }
 
@@ -23,7 +24,7 @@ type HandleChipClickType = (tag: string) => (evt: React.MouseEvent) => void;
  *
  */
 export default function PostFooter(props: PostFooterProp) {
-  const { post, onDelete } = props;
+  const { post, isEditable, onDelete } = props;
   const navigate = useNavigate();
 
   const handleTagClick: HandleChipClickType = (tag) => {
@@ -49,16 +50,18 @@ export default function PostFooter(props: PostFooterProp) {
           />
         ))}
       </Box>
-      <Box sx={{ alignSelf: "flex-start", minWidth: "80px" }}>
-        <IconButton aria-label="delete" onClick={onDelete(post)}>
-          <DeleteIcon />
-        </IconButton>
-        <Link aria-label="edit" to={`/posts/${getPostSlug(post)}/edit`}>
-          <IconButton aria-label="edit">
-            <EditIcon />
+      {isEditable && (
+        <Box sx={{ alignSelf: "flex-start", minWidth: "80px" }}>
+          <IconButton aria-label="delete" onClick={onDelete(post)}>
+            <DeleteIcon />
           </IconButton>
-        </Link>
-      </Box>
+          <Link aria-label="edit" to={`/posts/${getPostSlug(post)}/edit`}>
+            <IconButton aria-label="edit">
+              <EditIcon />
+            </IconButton>
+          </Link>
+        </Box>
+      )}
     </Box>
   );
 }

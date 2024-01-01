@@ -2,14 +2,16 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import { Post } from '../../store/slices/posts';
 import PostListItem from '../PostListItem';
+import { Me } from '../../store/slices/auth';
 
 export interface PostsListProps {
+  me: Me | null;
   posts: ReadonlyArray<Post>;
   onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
 }
 
 export default function PostsList(props: PostsListProps) {
-  const { posts, onDelete } = props;
+  const { me, posts, onDelete } = props;
 
   return (
     <Grid
@@ -46,7 +48,7 @@ export default function PostsList(props: PostsListProps) {
       }}
     >
       {posts.map((post, idx) => (
-        <PostListItem key={`${idx}_${post.id}`} post={post} onDelete={onDelete} />
+        <PostListItem key={`${idx}_${post.id}`} post={post} isEditable={post.author.id === me?.id} onDelete={onDelete} />
       ))}
     </Grid>
   );

@@ -21,6 +21,7 @@ import { useAppDispatch } from '../../store';
 import { ApiArgumentDescription, process_url_search_params } from '../../helpers/api';
 import PostSkeleton from '../../components/PostSkeleton';
 import PostDeleteConfirmationDialog from '../../components/PostDeleteConfirmationDialog';
+import { getMeInfo } from '../../store/slices/auth';
 
 
 const sections = [
@@ -96,6 +97,7 @@ export default function Blog() {
   const posts = useSelector(selectPosts);
   const totalPostCount = useSelector(selectTotalPostCount);
   const isLoading = useSelector(isLoadingPosts);
+  const me = useSelector(getMeInfo);
   const [searchParam, setSearchParam] = useSearchParams();
   const [isDeleteAlerShown, setDeleteAlerShown] = useState<boolean>(false);
   const [postToDelete, setPostToDelete] = useState<Post | null>(null);
@@ -185,7 +187,7 @@ export default function Blog() {
             ))} 
           </Grid> */}
       <Grid container spacing={1} sx={{ mt: 3 }}>
-        <PostsList posts={posts} onDelete={onPostDelete} />
+        <PostsList posts={posts} onDelete={onPostDelete} me={me} />
         {isLoading && <PostSkeleton times={postPerPage} />}
         {/* <Sidebar
               title={sidebar.title}

@@ -14,11 +14,14 @@ import PostPageContent from "../../components/PostPageContent";
 import { Post } from "../../store/slices/posts";
 import Box from "@mui/material/Box";
 import PostDeleteConfirmationDialog from "../../components/PostDeleteConfirmationDialog";
+import { getMeInfo } from "../../store/slices/auth";
 
 export default function PostContainer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const post = useSelector(selectPost);
+  const me = useSelector(getMeInfo);
+
   const isLoading = useSelector(isLoadingPost);
   const { postSlug } = useParams();
   const [isDeleteAlerShown, setDeleteAlerShown] = useState<boolean>(false);
@@ -60,7 +63,7 @@ export default function PostContainer() {
     <Box maxWidth="lg">
       {isLoading && <PostSkeleton />}
       {!isLoading && (
-        <PostPageContent post={post as Post} onDelete={onPostDelete} />
+        <PostPageContent post={post as Post} isEditable={post.author.id === me?.id} onDelete={onPostDelete} />
       )}
       <PostDeleteConfirmationDialog
         post={postToDelete}
