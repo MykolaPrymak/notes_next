@@ -1,0 +1,1 @@
+export { PostFooterProp, default } from './PostFooter';

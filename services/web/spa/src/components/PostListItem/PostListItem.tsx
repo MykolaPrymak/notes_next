@@ -1,25 +1,16 @@
 import * as React from "react";
 import Markdown from "../Markdown";
-import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import { Link, useSearchParams } from "react-router-dom";
 import { Post } from "../../store/slices/posts";
 import "./PostListItem.css";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import { getPostSlug } from "../../helpers/navigation";
-import Box from "@mui/material/Box";
+import PostFooter from "../PostFooter";
 
 export interface PostListItemProp {
   post: Post;
   onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
-}
-
-interface FilterByParams {
-  tag?: string;
-  author?: string;
 }
 
 export default function PostListItem(props: PostListItemProp) {
@@ -27,26 +18,6 @@ export default function PostListItem(props: PostListItemProp) {
   const [searchParam, setSearchParam] = useSearchParams();
 
   // TODO: show filter options with clear icon?
-  const addFilterBy: (
-    param: FilterByParams
-  ) => (evt: React.MouseEvent) => void = (param) => {
-    return (evt: React.MouseEvent) => {
-      evt.preventDefault();
-
-      // Clear
-      searchParam.delete("page");
-      searchParam.delete("author");
-      searchParam.delete("tag");
-      if (param.tag) {
-        searchParam.set("tag", param.tag);
-      }
-      if (param.author) {
-        searchParam.set("author", param.author);
-      }
-      setSearchParam(searchParam);
-    };
-  };
-
   const generateLinkFor: (
     searchKey: string,
     searchValue: string | undefined
@@ -65,7 +36,7 @@ export default function PostListItem(props: PostListItemProp) {
 
   return (
     <Paper
-      className="post-item"
+      className="post post-item"
       elevation={1}
       sx={{
         p: 3,
@@ -89,31 +60,7 @@ export default function PostListItem(props: PostListItemProp) {
 
       <Markdown className="markdown clipped">{post.body}</Markdown>
 
-      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-        <Box sx={{ flexGrow: 1 }}>
-          {post.tags.map((tag) => (
-            <Chip
-              key={`${post.id}_${encodeURIComponent(tag)}`}
-              className="tag"
-              label={tag}
-              component="a"
-              href={`/?${generateLinkFor("tag", tag)}`}
-              onClick={addFilterBy({ tag })}
-              clickable
-            />
-          ))}
-        </Box>
-        <Box sx={{ alignSelf: "flex-start", minWidth: "80px" }}>
-          <IconButton aria-label="delete" onClick={onDelete(post)}>
-            <DeleteIcon />
-          </IconButton>
-          <Link aria-label="edit" to={`/posts/${getPostSlug(post)}/edit`}>
-            <IconButton aria-label="edit">
-              <EditIcon />
-            </IconButton>
-          </Link>
-        </Box>
-      </Box>
+      <PostFooter post={post} onDelete={onDelete} />
     </Paper>
   );
 }

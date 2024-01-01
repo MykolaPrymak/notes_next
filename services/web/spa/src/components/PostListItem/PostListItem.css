@@ -2,13 +2,6 @@
     margin-left: 1em;
 } */
 
-.post-item .tag {
-    margin-right: 1em;
-    margin-top: 4px;
-}
-.post-item .tag:last-of-type {
-    margin-right: 0;
-}
 .post-item .post-item-link {
     color: inherit;
     text-decoration: inherit;
