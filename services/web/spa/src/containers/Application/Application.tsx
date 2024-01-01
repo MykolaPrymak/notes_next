@@ -53,10 +53,10 @@ const Root: React.FC<{ children: React.ReactNode, hideHeader?: boolean }> = ({ c
 const Application: React.FC<Record<string, never>> = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    const loadResult = dispatch(fetchMeInfo());
+    const thunkAction = dispatch(fetchMeInfo());
 
     return () => {
-      loadResult.abort();
+      thunkAction.abort();
     }
   }, []);
 

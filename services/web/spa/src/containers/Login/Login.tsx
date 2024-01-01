@@ -26,10 +26,10 @@ export default function SignIn() {
       password: data.get('password') as string,
     };
 
-    const loadResult = dispatch(loginUser(dataJSON));
+    const thunkAction = dispatch(loginUser(dataJSON));
 
     return () => {
-      loadResult.abort();
+      thunkAction.abort();
     }
   };
 

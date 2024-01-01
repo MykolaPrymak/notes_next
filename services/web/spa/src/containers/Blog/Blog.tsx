@@ -167,10 +167,10 @@ export default function Blog() {
 
   // Load post at component load or navigation
   useEffect(() => {
-    const loadResult = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
+    const thunkAction = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
 
     return () => {
-      loadResult.abort();
+      thunkAction.abort();
     }
   }, [searchParam.toString()]);
 

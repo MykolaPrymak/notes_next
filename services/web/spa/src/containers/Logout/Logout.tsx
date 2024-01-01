@@ -30,10 +30,10 @@ export default function LogoutPage() {
   const logoutError = useSelector(getLogoutError);
   
   React.useEffect(() => {
-    const logoutResult = dispatch(logoutUser());
+    const thunkAction = dispatch(logoutUser());
 
     return () => {
-      logoutResult.abort();
+      thunkAction.abort();
     }
   }, []);
 
