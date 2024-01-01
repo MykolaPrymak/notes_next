@@ -5,12 +5,11 @@ import PostListItem from '../PostListItem';
 
 export interface PostsListProps {
   posts: ReadonlyArray<Post>;
-  filterBy: (key: string, value: string) => void;
   onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
 }
 
 export default function PostsList(props: PostsListProps) {
-  const { posts, filterBy, onDelete } = props;
+  const { posts, onDelete } = props;
 
   return (
     <Grid
@@ -47,7 +46,7 @@ export default function PostsList(props: PostsListProps) {
       }}
     >
       {posts.map((post, idx) => (
-        <PostListItem key={`${idx}_${post.id}`} post={post} filterBy={filterBy} onDelete={onDelete} />
+        <PostListItem key={`${idx}_${post.id}`} post={post} onDelete={onDelete} />
       ))}
     </Grid>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
@@ -100,13 +100,6 @@ export default function Blog() {
   const [isDeleteAlerShown, setDeleteAlerShown] = useState<boolean>(false);
   const [postToDelete, setPostToDelete] = useState<Post | null>(null);
 
-  const setFilterBy = useCallback((key: string, value: string) => {
-    searchParam.set(key, value);
-    searchParam.delete("page");
-    setSearchParam(searchParam);
-  }, [searchParam.toString()]);
-
-
   const onPageChange = (evt: React.ChangeEvent<any>, page: number) => {
     evt.preventDefault();
     if (page > 1) {
@@ -192,7 +185,7 @@ export default function Blog() {
             ))} 
           </Grid> */}
       <Grid container spacing={1} sx={{ mt: 3 }}>
-        <PostsList posts={posts} filterBy={setFilterBy} onDelete={onPostDelete} />
+        <PostsList posts={posts} onDelete={onPostDelete} />
         {isLoading && <PostSkeleton times={postPerPage} />}
         {/* <Sidebar
               title={sidebar.title}

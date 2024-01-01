@@ -2,7 +2,7 @@ import * as React from "react";
 import Markdown from "../Markdown";
 import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Post } from "../../store/slices/posts";
 import "./PostListItem.css";
 import Paper from "@mui/material/Paper";
@@ -14,25 +14,54 @@ import Box from "@mui/material/Box";
 
 export interface PostListItemProp {
   post: Post;
-  filterBy: (key: string, value: string) => void;
   onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
 }
 
-const filterByTag: (
-  tag: string,
-  filterBy: any
-) => (evt: React.MouseEvent) => void = (tag, filterBy) => {
-  return (evt: React.MouseEvent) => {
-    evt.preventDefault();
-    const url = evt.currentTarget.getAttribute("href");
-    if (url) {
-      filterBy("tag", tag);
-    }
-  };
-};
+interface FilterByParams {
+  tag?: string;
+  author?: string;
+}
 
 export default function PostListItem(props: PostListItemProp) {
-  const { post, filterBy, onDelete } = props;
+  const { post, onDelete } = props;
+  const [searchParam, setSearchParam] = useSearchParams();
+
+  // TODO: show filter options with clear icon?
+  const addFilterBy: (
+    param: FilterByParams
+  ) => (evt: React.MouseEvent) => void = (param) => {
+    return (evt: React.MouseEvent) => {
+      evt.preventDefault();
+
+      // Clear
+      searchParam.delete("page");
+      searchParam.delete("author");
+      searchParam.delete("tag");
+      if (param.tag) {
+        searchParam.set("tag", param.tag);
+      }
+      if (param.author) {
+        searchParam.set("author", param.author);
+      }
+      setSearchParam(searchParam);
+    };
+  };
+
+  const generateLinkFor: (
+    searchKey: string,
+    searchValue: string | undefined
+  ) => string = (searchKey, searchValue) => {
+    searchParam.delete("page");
+    searchParam.delete("author");
+    searchParam.delete("tag");
+    if (searchValue) {
+      searchParam.set(searchKey, searchValue);
+    } else {
+      searchParam.delete(searchKey);
+    }
+
+    return searchParam.toString();
+  };
 
   return (
     <Paper
@@ -52,7 +81,7 @@ export default function PostListItem(props: PostListItemProp) {
       <Typography className="post-date-author">
         <em>
           {post.created_at} by{" "}
-          <Link to={`/?author=${encodeURIComponent(post.author.username)}`}>
+          <Link to={`/?${generateLinkFor("author", post.author.username)}`}>
             {post.author.username}
           </Link>
         </em>
@@ -60,21 +89,21 @@ export default function PostListItem(props: PostListItemProp) {
 
       <Markdown className="markdown clipped">{post.body}</Markdown>
 
-      <Box sx={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-        <Box sx={{flexGrow: 1}}>
+      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+        <Box sx={{ flexGrow: 1 }}>
           {post.tags.map((tag) => (
             <Chip
               key={`${post.id}_${encodeURIComponent(tag)}`}
               className="tag"
               label={tag}
               component="a"
-              href={`/?tag=${encodeURIComponent(tag)}`}
-              onClick={filterByTag(tag, filterBy)}
+              href={`/?${generateLinkFor("tag", tag)}`}
+              onClick={addFilterBy({ tag })}
               clickable
             />
           ))}
         </Box>
-        <Box sx={{alignSelf: "flex-start", minWidth: "80px"}}>
+        <Box sx={{ alignSelf: "flex-start", minWidth: "80px" }}>
           <IconButton aria-label="delete" onClick={onDelete(post)}>
             <DeleteIcon />
           </IconButton>
