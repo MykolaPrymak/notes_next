@@ -161,14 +161,11 @@ export default function Blog() {
 
   const handlePostDelete: React.MouseEventHandler<HTMLElement> = (evt) => {
     evt.preventDefault();
-    console.log("we should delete:", postToDelete);
     if (postToDelete) {
       dispatch(deletePost(postToDelete.id)).then(() => dispatch(resetPosts()));
     }
     onDeleteConfirmationClose();
-  }
-  // console.log({totalPostCount});
-  
+  }  
 
   const queryParam = process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args);
   const currentPage = Number(queryParam.get("page")) || 1;
@@ -176,9 +173,7 @@ export default function Blog() {
   const totalPages = Math.ceil(totalPostCount / postPerPage) || 1;
 
   // Load post at component load or navigation
-  // console.log('dispatch(fetchPosts()); / totalPostCount / searchParam', totalPostCount, searchParam.toString());
   useEffect(() => {
-
     const loadResult = dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args)));
 
     return () => {

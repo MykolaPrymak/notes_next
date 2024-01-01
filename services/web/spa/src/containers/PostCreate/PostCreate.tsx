@@ -1,14 +1,17 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  PostBody, resetPost,
-  getPostRequestError, isPostCreating, createPost
+  PostBody,
+  resetPost,
+  getPostRequestError,
+  isPostCreating,
+  createPost,
 } from "../../store/slices/post";
 import { useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { Post } from "../../store/slices/posts";
 import Box from "@mui/material/Box";
-import PostEditForm from "../../components/PostEditForm";
+import PostForm from "../../components/PostForm";
 import { getPostSlug } from "../../helpers/navigation";
 import { API_RESPONSE_BODY } from "../../helpers/api";
 
@@ -19,10 +22,10 @@ export default function PostCreateContainer() {
   const postRequestError = useSelector(getPostRequestError);
 
   const postTemplate: PostBody = {
-    title: '',
-    body: '',
+    title: "",
+    body: "",
     tags: [],
-    private: false
+    private: false,
   };
 
   // reset post state
@@ -56,14 +59,16 @@ export default function PostCreateContainer() {
   };
 
   const handleCancel = () => {
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <Box maxWidth="lg">
-      <PostEditForm
-        error={postRequestError}
+    <Box width="100%">
+      <PostForm
         post={postTemplate}
+        title="Create a new post"
+        submitBtnLabel="Create"
+        error={postRequestError}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
         disabled={isCreating}

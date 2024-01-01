@@ -13,8 +13,10 @@ import TagInput from "./TagInput";
 import AlertTitle from "@mui/material/AlertTitle";
 import { PostBody } from "../../store/slices/post";
 
-export interface PostEditFormProps {
+export interface PostFormProps {
   post: Post | PostBody;
+  title?: string;
+  submitBtnLabel?: string;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onCancel: (event: React.MouseEvent<HTMLElement>) => void;
   disabled: boolean;
@@ -22,8 +24,8 @@ export interface PostEditFormProps {
   validation?: any;
 }
 
-export const PostEditForm: React.FC<PostEditFormProps> = (props) => {
-  const { post, onSubmit, onCancel } = props;
+export const PostForm: React.FC<PostFormProps> = (props) => {
+  const { post, title, submitBtnLabel, onSubmit, onCancel } = props;
   return (
     <Box
       sx={{
@@ -34,12 +36,17 @@ export const PostEditForm: React.FC<PostEditFormProps> = (props) => {
       }}
     >
       <Typography component="h1" variant="h5">
-        Edit: {post.title}
+        {title}
       </Typography>
-      <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
+      <Box
+        component="form"
+        onSubmit={onSubmit}
+        noValidate
+        sx={{ mt: 1, width: "100%" }}
+      >
         {props?.error && (
           <Alert severity="error">
-            <AlertTitle>Update error</AlertTitle>
+            <AlertTitle>Error</AlertTitle>
             {props.error}
           </Alert>
         )}
@@ -70,17 +77,31 @@ export const PostEditForm: React.FC<PostEditFormProps> = (props) => {
           disabled={props.disabled}
         />
 
-        <TagInput key={post.id} name="tags" tags={post.tags} disabled={props.disabled} />
+        <TagInput
+          key={post.id}
+          name="tags"
+          tags={post.tags}
+          disabled={props.disabled}
+        />
 
         <FormControlLabel
           control={
-            <Switch disabled={props.disabled} name="private" id="private" defaultChecked={post.private} />
+            <Switch
+              disabled={props.disabled}
+              name="private"
+              id="private"
+              defaultChecked={post.private}
+            />
           }
           label="Private"
         />
 
         <Box sx={{ mt: 3, mb: props.disabled ? 0 : 2 }}>
-          <Button variant="contained" disabled={props.disabled} onClick={onCancel}>
+          <Button
+            variant="contained"
+            disabled={props.disabled}
+            onClick={onCancel}
+          >
             Cancel
           </Button>
           <Button
@@ -90,7 +111,7 @@ export const PostEditForm: React.FC<PostEditFormProps> = (props) => {
             sx={{ ml: 3 }}
             endIcon={props.disabled && <CircularProgress size={20} />}
           >
-            Update
+            {submitBtnLabel || "Submit"}
           </Button>
         </Box>
         {props.disabled && <LinearProgress sx={{ maxWidth: "md", mb: 2 }} />}
@@ -99,4 +120,4 @@ export const PostEditForm: React.FC<PostEditFormProps> = (props) => {
   );
 };
 
-export default PostEditForm;
+export default PostForm;

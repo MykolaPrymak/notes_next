@@ -18,7 +18,7 @@ import { useSelector } from "react-redux";
 import PostSkeleton from "../../components/PostSkeleton";
 import { Post } from "../../store/slices/posts";
 import Box from "@mui/material/Box";
-import PostEditForm from "../../components/PostEditForm";
+import PostForm from "../../components/PostForm";
 import { getPostSlug } from "../../helpers/navigation";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
@@ -57,8 +57,6 @@ export default function PostEditContainer() {
     updateAction.then((res) => {
       const apiPayload = res.payload as API_RESPONSE_BODY<Post>;
       if (apiPayload.ok) {
-        console.log(apiPayload);
-        
         navigate(`/posts/${getPostSlug(apiPayload.body)}`);
       }
     });
@@ -98,9 +96,11 @@ export default function PostEditContainer() {
       )}
       {(isLoading || isLoadError) && <PostSkeleton />}
       {isLoaded && (
-        <PostEditForm
-          error={postRequestError}
+        <PostForm
           post={post as Post}
+          title={`Edit: ${post?.title}`}
+          submitBtnLabel="Update"
+          error={postRequestError}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           disabled={isUpdating}

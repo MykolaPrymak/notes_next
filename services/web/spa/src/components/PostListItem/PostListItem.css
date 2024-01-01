@@ -4,6 +4,7 @@
 
 .post-item .tag {
     margin-right: 1em;
+    margin-top: 4px;
 }
 .post-item .tag:last-of-type {
     margin-right: 0;
