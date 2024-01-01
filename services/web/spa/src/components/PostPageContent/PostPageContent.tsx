@@ -9,10 +9,11 @@ import PostFooter from '../PostFooter';
 
 export interface PostPageContentProp {
   post: Post;
+  onDelete: (post: Post) => React.MouseEventHandler<HTMLElement>;
 }
 
 export default function PostPageContent(props: PostPageContentProp) {
-  const { post } = props;
+  const { post, onDelete } = props;
   return (
     <Paper className="post" sx={{
       p: 3,
@@ -33,9 +34,7 @@ export default function PostPageContent(props: PostPageContentProp) {
         {post.body}
       </Markdown>
 
-      <PostFooter post={post} onDelete={function (post: Post): React.MouseEventHandler<HTMLElement> {
-        return () => {throw new Error('Function not implemented.');}
-      } } />
+      <PostFooter post={post} onDelete={onDelete} />
     </Paper>
   );
 }
