@@ -63,7 +63,7 @@ export default function PostContainer() {
     <Box maxWidth="lg">
       {isLoading && <PostSkeleton />}
       {!isLoading && (
-        <PostPageContent post={post as Post} isEditable={post.author.id === me?.id} onDelete={onPostDelete} />
+        <PostPageContent post={post as Post} isEditable={post?.author?.id === me?.id} onDelete={onPostDelete} />
       )}
       <PostDeleteConfirmationDialog
         post={postToDelete}

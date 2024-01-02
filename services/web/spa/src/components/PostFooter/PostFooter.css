@@ -1,5 +1,6 @@
 .post .tag {
     margin-right: 1em;
+    margin-top: 8px;
 }
 .post .tag:last-of-type {
     margin-right: 0;

@@ -1,11 +1,8 @@
 import * as React from "react";
-import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
 import { Post } from "../../store/slices/posts";
 import Markdown from "../Markdown";
+import PostHeader from "../PostHeader";
 import PostFooter from "../PostFooter";
 import "./PostPageContent.css";
 
@@ -32,23 +29,7 @@ export default function PostPageContent(props: PostPageContentProp) {
         },
       }}
     >
-      <Typography variant="h4" className="post-title">
-      {post.private && (
-            <Tooltip title="Private post" aria-label="Private post" className="post-private" sx={{mr: 1}}>
-              <ShieldOutlinedIcon color="info" />
-            </Tooltip>
-          )}
-        {post.title}
-      </Typography>
-
-      <Typography className="post-date-author">
-        <em>
-          {post.created_at} by{" "}
-          <Link to={`/?author=${encodeURIComponent(post.author.username)}`}>
-            {post.author.username}
-          </Link>
-        </em>
-      </Typography>
+      <PostHeader post={post} detailPage={true} />
 
       <Markdown className="markdown">{post.body}</Markdown>
 

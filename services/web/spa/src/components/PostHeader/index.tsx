@@ -1,0 +1,1 @@
+export { PostHeaderProp, default } from './PostHeader';
