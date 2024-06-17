@@ -157,7 +157,7 @@ export default function Blog() {
   const handlePostDelete: React.MouseEventHandler<HTMLElement> = (evt) => {
     evt.preventDefault();
     if (postToDelete) {
-      dispatch(deletePost(postToDelete.id)).then(() => dispatch(resetPosts()));
+      dispatch(deletePost(postToDelete.id)).then(() => dispatch(fetchPosts(process_url_search_params<POST_API_ARG_NAMES>(searchParam, api_args))));
     }
     onDeleteConfirmationClose();
   }  
